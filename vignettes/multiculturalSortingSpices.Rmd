@@ -49,11 +49,6 @@ very last version of this document.
 ```
 
 
-This `pdf` was generated from the vignette
-`R4SPISE2018::cheeseMCA` from the `R` Package 
-`R4SPISE2018`. Check the help for the 
-very last version of this document.
-
 # Prelude
 
 If you want to make sure that you have a clean start,
@@ -68,10 +63,11 @@ preamble below).
 
 # Preamble
 
-
-Make sure that your start this analysis as a new `Rproject` so that
+## Rproject is best 
+Make sure that you start this analysis as a new `Rproject` so that
 the default directory will be correctly set.
 
+## (Install the packages if not one and then) Load the libraries 
 Before we start the analysis,
 we need to have our three standard packages installed from `Github`) 
 and the corresponding libraries loaded:

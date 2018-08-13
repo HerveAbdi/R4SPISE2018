@@ -2,7 +2,6 @@
 % Please edit documentation in R/cheeseSurvey4MCA.R, R/miniCheeseSurvey4MCA.R
 \name{cheeseSurvey4MCA}
 \alias{cheeseSurvey4MCA}
-\alias{cheeseSurvey4MCA}
 \title{An excel file for the data of
 a survey questionnaire to be analyzed by MCA.}
 \description{
