@@ -4,8 +4,8 @@
 
 ## The main theme of the workshop was indvidual differences
 
-## Main techniques use
+## Main techniques used
 
-1 Distatis: package `DistatisR`
-2 Partial Ttiadic Correspondence Analysis: package `PTCA4CATA`
-3 Multiple Correspondence Analysis: package `ExPosition`
+Markup : 1. Distatis: package `DistatisR`
+               2. Partial Ttiadic Correspondence Analysis: package `PTCA4CATA`
+               3.  Multiple Correspondence Analysis: package `ExPosition`
