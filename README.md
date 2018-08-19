@@ -6,6 +6,6 @@
 
 ## Main techniques used
 
-Markup : 1. Distatis: package `DistatisR`
-               2. Partial Ttiadic Correspondence Analysis: package `PTCA4CATA`
-               3.  Multiple Correspondence Analysis: package `ExPosition`
+1. Distatis: package `DistatisR`
+2. Partial Ttiadic Correspondence Analysis: package `PTCA4CATA`
+3.  Multiple Correspondence Analysis: package `ExPosition`
