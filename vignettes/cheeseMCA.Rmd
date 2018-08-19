@@ -56,18 +56,18 @@ knitr::opts_knit$get()
 # Preambule
 
 
-Make sure that your start this analysis a new `Rproject` so that
+Make sure that you start this analysis a new `Rproject` so that
 the default directory will be correctly set.
 
 Before we start the analysis,
-we need to have our standard packages installed from `Github`) 
+we need to have our standard packages installed (some from from `Github`) 
 and the corresponding libraries loaded:
 
-* `Distatis`
+* `Distatis` (from Guthub)
 * `ExPosition`
 * `InPosition`
-* `PTCA4CTA`
-* `R4SPISE2018`
+* `PTCA4CTA` (from Guthub)
+* `R4SPISE2018`(from Guthub)
 * `dplyr` (to recode the data)
 * `car` (to recode the data)
 * `grid`, `gridExtra`, and `gTable` (to save tables as graphics)
@@ -124,10 +124,10 @@ figure above.
 The sorting data are stored in the sheet labelled `Data.`
 The first column gives the ID of the respondents 
 and each column represents a question asked to the respondents.
-At the intersection of the row and a column we have the 
+At the intersection of a row and a column we have the 
 response of a respondent (row) to a question (column).
 
-When you record you own data,
+When you record your own data,
 make sure that you follow the same format, this way the script
 described in this vignette will apply 
 to your own analysis with minimal change.
@@ -145,17 +145,16 @@ To read the data we will use the function
 `DistatisR::read.df.excel()` (based upon
 the function `readxl::read_excel()`).
 ```{r resdSortingData}
-rawData <- read.df.excel(path = path2file, 
-                                         sheet = 'Data')$df.data
+rawData <- read.df.excel(path = path2file, sheet = 'Data')$df.data
 ```
 
-The data are noew read and stored in
+The data are now read and stored in
 the data frame called `rawData`.
 
 ### To save the file
 
 To save the data file 
-(under the original name of `myDataFile`
+(under the---not very---original name of `myDataFile`
 or maybe a more informative name)
 in a directory 
 (say `Downloads`). use the following command
@@ -167,7 +166,7 @@ saveFile <- file.copy(from = path2file, to = '~/Downloads/myDataFile.xlsx')
 
 ## Analysis plan
 
-In this example we will analyze the answers for two sets of questions.
+In this example we will analyze the answers to two sets of questions.
 
 The first set evaluates the knowledge of the respondent:
 and it comprises the
@@ -176,14 +175,14 @@ and it comprises the
  these questions have 5 different options 
  one correct and 4 incorrect options.
  Here we have decided to code these questions 
- with two values correct-incorrect
+ with only two values: correct or incorrect.
  
 the second set 
 comprises the questions `Q15_C01` to `Q38_C24`
 (or 32 to 55);
 these questions
-evaluates the behaviors, opinions, or attitudes of
-the respondents toward cheese that are either farm made or
+evaluate the behaviors, opinions, or attitudes of
+the respondents toward cheese that are either farm-made or
 industrial. These questions are answered with a 4 point 
 Likert scale (from 1 meaning "I totally agree" to
 4 meaning "I totally disagree")
@@ -194,24 +193,25 @@ Sex `(Q09_Sex)`, Age `(Q10_Age)`, the city where they live
 
 ## Selection and recoding
 
-In MCA the data need to recoded as nominal variables
+In MCA, before proceeding to analysis *per se*,
+all variables need to be nominal variables
 with the constraint that the different levels of a variable
 are roughly balanced.
-When are variable are naturally nominal, the process is 
-straightforward but some categories may need to be fused
+When a variable is already nominal, the process is 
+straightforward but some levels may need to be fused
 to have the levels roughly balanced.
-For ordinal or quantitative data the procedure is to bin
-the data so that the bin are roughly balanced
+For ordinal or quantitative data the procedure is to "bin"
+the data so that the bins are roughly balanced
 
 ## From one dataframe to the other
 
 From the dataframe `rawData` we know create
 the new dataframe `cleanData`. It will have the 
-same rows but he columns are obtained by recoding 
+same rows but the columns are obtained by recoding 
 the columns of `rawData.`
 
 The first step is to create the new data frame with 
-only the variables we want to use, we also re-order the variables
+only the variables we want to use; we also re-order the variables
 to have the respondent variables (i.e., Sex, Age, city) first.
 This is done with this line of code 
 
@@ -222,7 +222,7 @@ temp.df <- dplyr::select(rawData, Q09_Sex:Q11_City, Q01_Know1:Q08_Know8,
 
 ### Participant description
 
-We use `car::recode` to recode sex as 1.2 to m/f
+We use `car::recode` to recode the variable `sex` from  1/2 to m/f
 ```{r recodeSex}
 # We recode sex as m/f
 sex  =  car::recode(temp.df[,'Q09_Sex'], " 1 = 'm';2 = 'f'")
@@ -246,17 +246,17 @@ But in this sample the sum
 goes from 1 to 6 with a mode at 4/5 as can be seen from the 
 histogram of the number of correct answers.
 
-```{r histKnow}
-hist(correct.answers)
+```{r histKnow, fig.width = 6, fig.height= 5}
+hist(correct.answers, main = '', breaks = 0:8,  xlab = 'Number of Correct Answers')
 ```
 
-we will concatenate them. and re-evaluate them from 1 to 3
+we will concatenate them.and re-evaluate them from 1 to 3
 ```{r rescaleKnow}
 # Make only three categories use recode from package car
 know =  car::recode(correct.answers, "0 = 1; 1 = 1; 2 = 1; 3 = 1; 4 = 2; 5 = 3; 6 = 3")
 ```
 
-We will also recode the variable `Age` into four categories
+We will also recode the variable `Age` into four levels
 ```{r rescaleAge}
 oriAge <- temp.df$Q10_Age
 newAge  <- car::recode(oriAge, "1 = 1; 2 = 1; 3 = 2; 4 = 3; 5 = 4; 6 = 4")
@@ -268,12 +268,11 @@ The first step when analyzing Likert scales is to look
 at the distribution of the scores.
 Here we will create a table with the questions as rows
 and the columns as levels (from 1 to 4).
-```{r , fig.cap = 'Response distribution for Lickert scales \\label{tab:Lickert}', outwidth = '100%'}
-# 
+```{r , fig.cap = 'Response distribution for Likert scales \\label{tab:Likert}', outwidth = '100%'}
 knitr::kable( t(apply(rawData[,32:55],2,function(x){summary(as.factor(x))})))
 ```
 
-This table shows that the responses are not very balanced,
+This table shows that the levels of the responses are not very balanced,
 so we decided to binarize the answers and to keep only the subset
 of questions that can be binarized as {1,2}|{3,4} 
 (other choices would have been acceptable of course).
@@ -305,12 +304,10 @@ cleanData <- cleanData[complete.cases(cleanData),]
 The dataframe is now ready to be analyzed 
 with multiple correspondence analysis 
 
-
-
 # Multiple Correspondence Analysis
 
 ## Complete analysis
-Use `ExPosition`
+Use the function `epMCA` from the package `ExPosition`
 ```{r runMCA}
 resMCA <- epMCA(cleanData, graphs = FALSE) 
 ```
@@ -318,14 +315,14 @@ resMCA <- epMCA(cleanData, graphs = FALSE)
 
 # Subset analysis
 
-Because Dimension 1 was mostly separating the inhabitants
+Because Dimension 1 mostly separates the inhabitants
 of Lille from the inhabitants of Angers, we decided to
-perform a subset analysis amd analyze separately 
+perform a subset analysis and analyze separately 
 the data from each city.
 
 ## Lille
 
-Create data set
+Create the "Lille" data set by subsetting the whole data set.
 
 ```{r subset.L}
  cleanData.Lille = cleanData[cleanData[,'City'] == 'Lille',]
@@ -341,25 +338,27 @@ resMCA.Lille <- epMCA(cleanData.Lille, graphs = FALSE)
 
 ## Angers
 
+Create the "Angers"  data set by subsetting the whole data set.
 
 ```{r subset.A}
  cleanData.Angers <- cleanData[cleanData[,'City'] == 'Angers',]
  cleanData.Angers <- cleanData.Angers[, (colnames(cleanData.Angers) != 'City') ]
+```
+
 # MCA Angers
-resMCA.Angers <- epMCA(cleanData.Angers, graphs = FALSE) 
+
+```{r runMCA.angers}
+ resMCA.Angers <- epMCA(cleanData.Angers, graphs = FALSE) 
 ```
 
 # Graphics
-Make some graphs
+Make some graphs.
 
-get some colors per variables
-
+First, get the colors for the variables
 ```{r colors}
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 ```
-
-
 
 ## Variable contributions
 
@@ -392,10 +391,9 @@ grid.draw(TableWithTitle)
 a00.1.ctrTable  <- recordPlot()
 ```
 
-
 To create graphics we will 
-color the different labels of a variable with the same color.
-First we create the vector storing the color.
+color the labels of a given variable with the same color.
+First we create the vector storing the colors.
 
 ```{r }
 nM   <- nrow(cJ)
@@ -408,9 +406,7 @@ for (i in 1:nVar){
 }
 ```
 
-## Scree for the MCA
-
-
+## Scree plot for the MCA
 
 ```{r screeMCA, fig.height=4, fig.width= 7, }
 # 5.A. A scree plot for the RV coef. Using standard plot (PTCA4CATA)
@@ -467,16 +463,14 @@ print(aa.1.BaseMap.Fj)
 ## Map for the observations
 
 
-Here we will color the observations by City, to confirm that this is
-main source of variation for this data set.
-
+Here we color the observations by `City`, 
+to confirm that this is, indeed,
+the main source of variation for this data set.
 ```{r createFiMap}
-
 Fi <- resMCA$ExPosition.Data$fi
 colCity <- c('darkblue', 'red4')
 nI <- nrow(Fi)
 col4I.City <- rep("",nI)
-
 for (i in 1:length(colCity) ){
   lindex <- cleanData[,'City'] %in% unique(cleanData[,'City'])[i]
   col4I.City[lindex] <- colCity[i]
@@ -548,13 +542,11 @@ ca.2.BaseMapNoDot.Fj.Angers  <- BaseMap.Fj.Angers$zeMap_background +
                           BaseMap.Fj.Angers$zeMap_text + labels4MCA.Angers 
 ```
 
-```{r plotaMap.A, fig.width= 8 , fig_width = 10}
-#pdf('AngersFj.pdf')
+```{r plotaMap.A, fig.width = 10, fig.height = 8}
 print(ca.1.BaseMap.Fj.Angers)
-#dev.off()
 ```
 
-## Graph of the Variables for Angers
+## Graph of the Variables for Lille
 
 ```{r createFjMap.L}
 col4Labels.sub <- col4Labels[varNames != 'City']
@@ -585,15 +577,13 @@ labels4MCA.Lille <- createxyLabels.gen(x_axis = axis1,
                lambda = resMCA.Lille$ExPosition.Data$eigs,
                tau    = resMCA.Lille$ExPosition.Data$t)
 # make the maps
-cb.1.BaseMap.Fj.Lille       <- BaseMap.Fj.Lille$zeMap +  labels4MCA.Lille 
+cb.1.BaseMap.Fj.Lille       <- BaseMap.Fj.Lille$zeMap + labels4MCA.Lille 
 cb.2.BaseMapNoDot.Fj.Lille  <- BaseMap.Fj.Lille$zeMap_background +
                           BaseMap.Fj.Lille$zeMap_text + labels4MCA.Lille 
 ```
 
-```{r plotaMap.L, fig.width= 8 , fig_width = 10}
-pdf('LilleFj.pdf')
+```{r plotaMap.L, fig.width = 10, fig.height=8}
 print(cb.1.BaseMap.Fj.Lille)
-dev.off()
 ```
 
 # Save the graphics as a powerpoint
