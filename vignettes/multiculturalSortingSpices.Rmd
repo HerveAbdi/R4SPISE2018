@@ -65,11 +65,11 @@ preamble below).
 
 ## Rproject is best 
 Make sure that you start this analysis as a new `Rproject` so that
-the default directory will be correctly set.
+the default directory will be correctly set and the memori has been cleared.
 
-## (Install the packages if not one and then) Load the libraries 
+## (Install the packages if not already done, and then) Load the libraries 
 Before we start the analysis,
-we need to have our three standard packages installed from `Github`) 
+we need to have our three standard packages installed (from `Github`) 
 and the corresponding libraries loaded:
 
 * `DistatisR`
@@ -77,6 +77,10 @@ and the corresponding libraries loaded:
 * `R4SPISE2018`
 
 We also need some other packages namely:
+
+* `Matrix`
+* `factoextra`
+* `Exposition`
 
 ```{r loadPackages}
 # Decomment all/some these lines if the packages are not installed
@@ -164,7 +168,7 @@ The sorting data are stored in the dataframe `multiSort`.
 
 To save the data file 
 (under the original name of `myDataFile`
-or maybe a more informative name)
+or maybe a under a more informative name)
 in a directory 
 (called, for example, `Downloads`), use the following command:
 ```{r savexls}
@@ -225,13 +229,13 @@ the plain DISTATIS for the sorting task.
 ```{r runDistatis}
 resDistatis <- distatis(DistanceCube)
 ```
-The list `resDistatis` contains the results of the analysis,
-this list contains two lists: 
-The first one
-called `resDistatis$res4Cmat` contains
+The list `resDistatis` contains the results of the analysis;
+This list,, in turnn contains two other lists: 
+The first list,
+called `resDistatis$res4Cmat`, contains
 the results for the $R_V$ analysis
 (the $R_V$ matrix is also called the **C** matrix);
-The second one called `resDistatis$res4Splus`
+The second list, called `resDistatis$res4Splus`,
 contains the results for the analysis of the
 compromise (called the **S** matrix) .
 If you have forgotten the output format of `distatis`,
@@ -266,13 +270,13 @@ BootCube <- PTCA4CATA::Boot4Mean(G, design = descJudges,
 The compromise is obtained as a weighted sum of the
 $\alpha_j\mathbf{S}_j$ with each of the  $J$ judges belonging to one
 of $K$ groups (i.e., country).
-In plain DISTATIS, each observation can be projected onto
+In plain `DISTATIS`, each observation can be projected onto
 the compromise; in a similar manner, when the 
 assessors are nested into another group factor (e.g., countries), 
 we can project 
 these groups onto the compromise.
 The easiest way to do so is to use the partial projections
-and compute the weighted sum corresponding to each group.
+and then compute the weighted sum corresponding to each group.
 
 ```{r computeSk}
 F_j     <- resDistatis$res4Splus$PartialF
@@ -298,6 +302,7 @@ for (k in 1:nK){
 }
 
 ```
+
 
 
 
@@ -536,9 +541,19 @@ b3.gg.map.elli <- gg.compromise.graph.out$zeMap +
 #
 ```
 
+### The compromise map
 
 ```{r plot4S, fig.height=6, fig.width= 9}
+# Print the product graph
 print(b2.gg.Smap)
+```
+
+### The compromise map with confidence ellipsoids
+
+
+```{r plot4S_CIs, fig.height=6, fig.width= 9}
+# Print the product graph
+print(b3.gg.map.elli)
 ```
 
 ## Map of compromise with partial factor scores
@@ -570,9 +585,14 @@ d1.partialFS.map.byProducts <- gg.compromise.graph.out$zeMap + map4PFS$mapColByI
 d2.partialFS.map.byCategories  <- gg.compromise.graph.out$zeMap + map4PFS$mapColByBlocks
 ```
 
+### Map of the partial factor scores: Colored by products 
+
 ```{r SwithCategories.1, fig.height=6, fig.width= 9, message = FALSE, warning = FALSE, error = FALSE}
 print(d1.partialFS.map.byProducts )
 ```
+
+
+### Map of the partial factor scores: Colored by Countries 
 
 ```{r SwithCategories.2, fig.height=6, fig.width= 9, message = FALSE, warning = FALSE, error = FALSE}
 print(d2.partialFS.map.byCategories)

@@ -67,11 +67,11 @@ knitr::opts_knit$get()
 # Preamble
 
 
-Make sure that your start this analysis as a new `Rproject` so that
-the default directory will be correctly set.
+Make sure that you start this analysis as a new `Rproject` so that
+the default directory will be correctly set, and the memory cleared.
 
 Before we start the analysis,
-we need to have our standard packages installed from `Github`) 
+we need to have our standard packages installed (including some from `Github`) 
 and the corresponding libraries loaded:
 
 * `DistatisR`
@@ -83,7 +83,7 @@ and the corresponding libraries loaded:
 ## load
 
 ```{r loadPackages}
-# Decomment all/some these lines if the packages are not installed
+# Decomment all/some 0f these lines if the packages are not installed
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
 #  install.packages(prettyGraphs)
@@ -725,7 +725,9 @@ print(d03.BaseMapNoLabeli.Fij, )
 
 ### Plot (Q-) Significant Descriptors
 
-Highlight the significant (from Cochran's Q) only.
+To make the graph more readable, we can
+highlight the significant descriptors (as identified from Cochran's Q), plot in grey
+the non-significant descriptors.
 
 ```{r  plotQSig}
 color4AttributesCorrected <- color4Attributes

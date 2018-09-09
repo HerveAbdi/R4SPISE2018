@@ -11,11 +11,11 @@ storing the data from an attitude survey:
 305 (French) consumers
 described their attitude, consumption, and knowledge about
  cheese (Maroille).
- These data are analyzed with multiple correspoondence analysis
+ These data are analyzed with multiple correspondence analysis
  with the packages \code{ExPosition} and \code{PTCA4CATA}
 (note that the package
 \code{PTCA4CATA} needs to have been installed
-from github with the
+from Github with the
 command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 
 \code{miniCheeseSurvey4MCA}:

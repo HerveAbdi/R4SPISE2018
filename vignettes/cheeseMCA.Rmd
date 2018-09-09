@@ -56,22 +56,23 @@ knitr::opts_knit$get()
 # Preambule
 
 
-Make sure that you start this analysis a new `Rproject` so that
+Make sure that you start this analysis as a new `Rproject` so that
 the default directory will be correctly set.
 
 Before we start the analysis,
-we need to have our standard packages installed (some from from `Github`) 
+we need to have our standard packages installed 
+(some from `Github`) 
 and the corresponding libraries loaded:
 
-* `Distatis` (from Guthub)
+* `Distatis` (from *Github*)
 * `ExPosition`
 * `InPosition`
-* `PTCA4CTA` (from Guthub)
-* `R4SPISE2018`(from Guthub)
+* `PTCA4CTA` (from *Github*)
+* `R4SPISE2018`(from *Github*)
 * `dplyr` (to recode the data)
 * `car` (to recode the data)
 * `grid`, `gridExtra`, and `gTable` (to save tables as graphics)
-* `stringi` (to recode strings)
+* `stringi` (to recode strings).
 
 and all their extensions:
 ```{r loadPackages}
@@ -113,13 +114,16 @@ path2file <- system.file("extdata",
 ```
 
 
+
 ```{r xls.datafile, echo=FALSE, fig.cap="The Data Excel File \\label{fig:spicesxl}", fig.height=3, fig.width=4, include=TRUE, out.width='70%'}
 
 knitr::include_graphics('../man/figures/maroilesMCA.png')
 
 ```
 
-if you open this excel file, it will look like the
+Now the variable `path2file` contains the name (and location)
+of the excel data file.
+If you open this excel file, it will look like the
 figure above. 
 The sorting data are stored in the sheet labelled `Data.`
 The first column gives the ID of the respondents 
@@ -139,7 +143,8 @@ the graphics, and finally save everything into a powerpoint.
 
 ## Read the data
 
-The excel file name and location (i.e., path) are
+Recall that,
+the excel file name and location (i.e., path) are
 stored in the variable `path2file`. 
 To read the data we will use the function
 `DistatisR::read.df.excel()` (based upon
