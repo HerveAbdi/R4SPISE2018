@@ -64,27 +64,32 @@ Again, be prepared to wait till the vignettes are built.
 ### beersCATA		
 
 *Correspondence Analysis for CATA:*
+
 Novices and experts evaluated 9 beers.
 
 ### cheeseMCA	
 
 *Multiple Correspondence Analysis:*
+
 Analyzing a survey about cheese
 
 ### fermentationIn2NationsMCA
 
 *MCA with supplementary observations:*
+
 Analysis of a survey about fermentation answered by 373 participants (220 French and 183 Vietnamese). In addition, 30 participants from the SPISE2018 advanced workshop answered the questionnaire and are considered as supplementary observations.
 
 
 ### multiculturalSortingSpices	
 
-*DISTATIS: *
+*DISTATIS:*
+
 Analyzing a sorting task with different groups of assessors.
 
 ### sortingNoodlesInAsia
 
 *DISTATIS (with vocabulary and barycentric projections):*
+
 Analyzing a sorting task of pictures of Ramen Noodles
 with verbal description of the groups made by  the participants.
 
