@@ -19,7 +19,7 @@
 # Documentation with roxygen2
 #' @title
 #' The R4SPISE2018 package provides utilities
-#' (data sets, vignette, scripts, etc.) for the SPISE 2018 Advanced
+#' (data sets, vignettes, scripts, etc.) for the SPISE 2018 Advanced
 #' Workshop in Sensory Evaluation (Vietnam 07/23/2018 to 07/26/2018).
 #'
 #'@description
@@ -29,7 +29,7 @@
 #' (07/23/2018 to 07/26/2018, for details see:
 #'   \url{http://sensorylab.hcmut.edu.vn/spise2018/}).
 #' It provides
-#' datasets, vignettes, scripts and various utilities.
+#' datasets, vignettes, scripts, and various utilities.
 #'@author Herve Abdi \email{herve@utdallas.edu}
 #'@docType package
 #'@name R4SPISE2018

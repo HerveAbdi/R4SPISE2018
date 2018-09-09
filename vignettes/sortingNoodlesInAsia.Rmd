@@ -41,18 +41,8 @@ knitr::opts_chunk$set(
 
 
 ```{r, eval = FALSE,ECHO = FALSE , include = FALSE}
+# Knitr options here
 knitr::opts_knit$get()
-
-
-```{r note, include = FALSE, ECHO = FALSE, eval = FALSE}
-
-
-**NOTE:** 
-
-This `pdf` was generated from the vignette
-`R4SPISE2018::cheeseMCA` from the `R` Package 
-`R4SPISE2018`. Check the help for the 
-very last version of this document.
 ```
 
 
@@ -131,6 +121,8 @@ following instructions:
 # devtools::install_github('HerveAbdi/DistatisR')
 #  install.packages(prettyGraphs)
 #  install.packages('Matrix')
+#  install.packages('factoextra')
+#  install.packages('ExPosition')
 #
 #  load the libraries that we will need
 suppressMessages(library(Matrix))

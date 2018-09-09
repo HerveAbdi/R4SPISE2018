@@ -8,7 +8,7 @@ Description:
      R4SPISE2018 is a set utilities for the SPISE2018 Advanced Sensory Evaluation meeting.
      It provides datasets (R and excel), R-scripts, vignettes and various "goodies."
 License: GPL-2
-Imports: ExPosition, PTCA4CATA, DistatisR, ggplot2, coin, car
+Imports: ExPosition, PTCA4CATA, DistatisR, ggplot2, coin, car, dplyr
 Depends: R (>= 3.5.0)
 Encoding: UTF-8
 LazyData: true
