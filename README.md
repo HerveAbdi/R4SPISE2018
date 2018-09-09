@@ -1,7 +1,7 @@
 ---
 title: "Package: R4SPISE2018"
 author: "Hervé Abdi"
-date: "`September 9, 2018`"
+date: "`September 10, 2018`"
 ---
 
 # R4SPISE2018 .0.1.0
@@ -45,6 +45,7 @@ the command:
 ```{r}
 devtools::build_vignettes()
 ```
+Again, be prepared to wait till the vignettes are built.
 
 ## Main statistical techniques and R-packages used
 
@@ -52,45 +53,38 @@ devtools::build_vignettes()
 2. Partial Triadic Correspondence Analysis (PTCA): package `PTCA4CATA`
 3. Multiple Correspondence Analysis (MCA): package `ExPosition`
 
-### Where to dowlnload the packages
+### Where to download the packages
 
     * `ExPosition` can be downloaded from `CRAN`
-    * `DistatisR` and `PYCA4CATA` should be downloaded from `HerveAbdi/Github'
+    * `DistatisR` and `PTCA4CATA` should be downloaded from `HerveAbdi/Github'
 
 ## Current Vignettes
 
 
 ### beersCATA		
 
-Correspondence Analysis for CATA: 
-
+*Correspondence Analysis for CATA:*
 Novices and experts evaluated 9 beers.
 
 ### cheeseMCA	
 
-Multiple Correspondence Analysis: 
-
+*Multiple Correspondence Analysis:*
 Analyzing a survey about cheese
 
 ### fermentationIn2NationsMCA
 
-MCA with supplementary observations:
-
-Analysis of a survey about fermentation answered by 373 participants (220 Frecn and 183 Vietnamese).
-In addition 30 participants from the SPISE2018 advanced workshop answred the quetionnaire
-and are considered as supplemetary observations.
+*MCA with supplementary observations:*
+Analysis of a survey about fermentation answered by 373 participants (220 French and 183 Vietnamese). In addition, 30 participants from the SPISE2018 advanced workshop answered the questionnaire and are considered as supplementary observations.
 
 
 ### multiculturalSortingSpices	
 
-DISTATIS: 
-
-Analyzing a sorting task with different groups of assessors
+*DISTATIS: *
+Analyzing a sorting task with different groups of assessors.
 
 ### sortingNoodlesInAsia
 
-DISTATIS:
-
+*DISTATIS (with vocabulary and barycentric projections):*
 Analyzing a sorting task of pictures of Ramen Noodles
 with verbal description of the groups made by  the participants.
 
