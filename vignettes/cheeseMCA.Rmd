@@ -42,10 +42,7 @@ Or, better (see below, preamble), you can use an `Rproject` for this project.
 ```{r setup, include = FALSE, ECHO = FALSE}
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set( collapse = TRUE, comment = "#>")
 ```
 
 ```{r, eval = FALSE,ECHO = FALSE , include = FALSE}
@@ -608,7 +605,7 @@ list2Graphs <- PTCA4CATA::saveGraph2pptx(file2Save.pptx = name4Graphs,
 
 Note that we could also have created a powerpoint with
 `Rmarkdown` by using the following options in the 
-preambule:
+preamble:
 
 ```{r powerpoint,  message = FALSE, warning = FALSE, error = FALSE, eval = FALSE}
 output:

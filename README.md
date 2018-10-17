@@ -18,7 +18,8 @@ Prior to installing the `R4SPISE2018` package,
 we need to install some other packages (mostly from `Github`).
 
 ```{r}
-# install.packages('devtools') # decomment this line if devtools is not yet installed
+# decomment the line below if devtools is not yet installed
+# install.packages('devtools') 
 install.packages('factoextra')
 devtools::install_github('HerveAbdi/PTCA4CATA')
 devtools::install_github('HerveAbdi/DistatisR')
@@ -77,7 +78,7 @@ Analyzing a survey about cheese
 
 *MCA with supplementary observations:*
 
-Analysis of a survey about fermentation answered by 373 participants (220 French and 183 Vietnamese). In addition, 30 participants from the SPISE2018 advanced workshop answered the questionnaire and are considered as supplementary observations.
+Analysis of a survey about attitudes towards fermented food answered by 373 participants (220 French and 183 Vietnamese). In addition, 30 participants from the SPISE2018 advanced workshop answered the questionnaire and are considered as supplementary observations.
 
 
 ### multiculturalSortingSpices	
