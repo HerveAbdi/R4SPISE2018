@@ -5,10 +5,11 @@ Version: 0.1.0
 Author: Herve Abdi
 Maintainer: Herve Abdi <herve@utdallas.edu>
 Description:
-     R4SPISE2018 is a set utilities for the SPISE2018 Advanced Sensory Evaluation meeting.
-     It provides datasets (R and excel), R-scripts, vignettes and various "goodies."
+     R4SPISE2018 is a set of utilities for the SPISE2018 Advanced Sensory Evaluation meeting.
+     It provides datasets (R and excel), R-scripts, vignettes, and various "goodies."
 License: GPL-2
-Imports: ExPosition, PTCA4CATA, DistatisR, ggplot2, coin, car, dplyr
+Imports: ExPosition, PTCA4CATA, DistatisR, ggplot2, coin, car, dplyr,
+        corrplot, data4PCCAR, gplots, plyr, InPosition
 Depends: R (>= 3.5.0)
 Encoding: UTF-8
 LazyData: true
@@ -18,5 +19,5 @@ VignetteBuilder: utils,
 URL: http://github.com/HerveAbdi/R4SPISE2018
 BugReports: http://github.com/HerveAbdi/R4SPISE2018/issues
 Suggests: knitr,  rmarkdown, Matrix, 
-     prettyGraphs, dplyr, stringi, grid, gridExtra, gtable, 
+     prettyGraphs,  stringi, grid, gridExtra, gtable, 
      readxl, factoextra
