@@ -5,34 +5,35 @@ date: "`r Sys.time()`"
 output:
 #      powerpoint_presentation:
 #          slide_level: 4
-#       bookdown::html_document2:
-       rmarkdown::html_vignette:
-          default: false
-          toc: true
-          number_sections: true
-          fig_caption: true
-       bookdown::html_document2:
+#      bookdown::html_document2:
+        rmarkdown::html_vignette:
+           default: false
+           toc: true
+           toc_depth: 3
+           number_sections: true
+           fig_caption: true
+#        bookdown::html_document2:
 #          default: false
-          toc: true
-          toc_depth: 2
-          toc_float:
-            collapsed: false
-          number_sections: true
-          fig_caption: true
-          df_print: paged
-          theme: cerulean
-          keep_tex: true
-       pdf_document:
-          keep_tex: true
-          verbose: true
-#          default: true
-          toc: true
-          toc_float:
-            collapsed: false
-          toc_depth: 2
-          number_sections: true
-          fig_caption: true
-          df_print: kable
+#           toc: true
+#           toc_depth: 2
+#           toc_float:
+#             collapsed: false
+#           number_sections: true
+#           fig_caption: true
+#           df_print: paged
+#           theme: cerulean
+#           keep_tex: true
+#        pdf_document:
+#           keep_tex: true
+# #          verbose: true
+# #          default: true
+#           toc: true
+# #          toc_float:
+# #            collapsed: false
+#           toc_depth: 2
+#           number_sections: true
+#           fig_caption: true
+#           df_print: kable
 vignette: >
   %\VignetteIndexEntry{Multiple Correspondence Analysis: Analyzing a survey about fermented products (with supplementary observations)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -59,10 +60,10 @@ rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
                    output_dir = '../test4Spise2018/stuff4Ferment/')
 # Previous command cannot pass options such as keep_tex
 # to do so run only on format at a time such as:
-rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
+rmarkdown::render("fermentationIn2NationsMCA.Rmd",
                    bookdown::pdf_document2(keep_tex = TRUE, 
-                   toc_depth = 3) ,
-                   output_dir = '../test4Spise2018/stuff4Ferment/')
+                   toc_depth = 3)  ,
+                   output_dir = '../../test4Spise2018/stuff4Ferment/')
 # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd','tufte::tufte_html')
 # Not tufte works only with 2 levels of section
 # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',tufte::tufte_handout(toc_depth = 2))
@@ -126,10 +127,22 @@ and the corresponding libraries loaded:
 and all their extensions:
 ```{r loadPackages}
 # Decomment all/some these lines if the packages are not installed
+#_____________________________________________________________________
+# # October 19, 2018. Temporary fix for an Rstudio problem
+# # if this error is generated 
+# build_site()
+# Error in eval(substitute(expr), data, enclos = parent.frame()) :
+# is.character(repos) is not TRUE
+# # from Rstudio team: use these two lines
+# repos <- getOption("repos")
+# options(repos = setNames(as.character(repos), names(repos)))
+#_____________________________________________________________________
+#
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
+# devtools::install_github('HerveAbdi/data4PCCAR')
 # devtools::install_github('HerveAbdi/R4SPISE2018') # of course!
-#  install.packages(prettyGraphs)
+#  install.packages('prettyGraphs')
 #  install.packages('Matrix')
 #  install.packages('dplyr')
 #  install.packages('gridExtra')
@@ -140,11 +153,12 @@ and all their extensions:
 #  install.packages('kableExtra')
 #  load the libraries that we will need
 suppressMessages(library(Matrix))
-suppressMessages(library(DistatisR))
-suppressMessages(library(PTCA4CATA))
 suppressMessages(library(prettyGraphs))
 suppressMessages(library(ExPosition))
 suppressMessages(library(InPosition))
+suppressMessages(library(DistatisR))
+suppressMessages(library(PTCA4CATA))
+suppressMessages(library(data4PCCAR))
 suppressMessages(library(dplyr))
 suppressMessages(library(gridExtra))    # to save a table as a graph
 suppressMessages(library(grid))         # that will be saved in the
@@ -166,9 +180,9 @@ name4Graphs = 'fermentationFrom2Countries.pptx'
 
 ## Parameters for the analysis: data file name
 
-The data are stored n an excel file that is stored with the package.
-The excel files is called 'fermentedFoodSurvey.xlsx', 
-its path can be recovered as:
+The data are stored in an excel file 
+called 'fermentedFoodSurvey.xlsx' that is stored with the package and
+whose path can be recovered as:
 ```{r filename, eval = TRUE}
 file2read.name     <- 'fermentedFoodSurvey.xlsx' # xls data file name
 path2file <- system.file("extdata", file2read.name, package = "R4SPISE2018")
@@ -254,7 +268,7 @@ The variables `fish` to `meat` were answers to the question
 `No`, and `Do not know`). 
 The variables `quality` to `clear` were Likert scales 
 (answers from 1 to 4) about statements on fermentation;
-These likert scales were recoded as  `A` (agree) and
+These Likert scales were recoded as  `A` (agree) and
 `D` (disagree). `Sex` is coded as `M` vs `W`.
 the variable `Age` is coded as less then 25 (`<25`) and
 more than 25 (`>25`). 
@@ -333,7 +347,7 @@ temp.df[,'nation'] <- plyr::mapvalues(temp.df[,'nation'],
 We can now put together the new data set.
 Note that in this example the supplementary observations
 were stored in the same excel sheet as the active data
-but the supplementary observations's names all start the letter `S`.
+but the supplementary observations' names all start the letter `S`.
 The status of the observations (i.e., active vs. supplementary)
 is recorded in the variable `supVar` that we will use to subset
 the observations into the active set 
@@ -367,8 +381,9 @@ But before using this function,
 we need to prepare the supplementary data.
 To do so, we need to
 transform the supplementary data from a data frame with
-variables being factors to 0/1 variables (with as many
-0/1 variables as there are labels for this variable).
+variables being factors to a new data frame with 0/1 variables 
+(with as many
+0/1 variables as there are levels for this variable).
 For this transformation to be correctly done, it needs to be
 done on the merged data set (i.e., active + supplementary).
 All this is done with the code below
@@ -388,10 +403,10 @@ colnames(resMCA.sup$fii) <- paste0('Dimension ',
 
 ## Inferences
 
-Inferences are performed with the package \code{InPosition}
+Inferences are performed with the package `InPosition`
 
 ```{r inferences, message = FALSE, warning = FALSE, results= FALSE}
-resMCA.ind <- epMCA.inference.battery(cleanData, graphs = FALSE)
+resMCA.inf <- epMCA.inference.battery(cleanData, graphs = FALSE)
 ```
 # Graphics
 
@@ -404,22 +419,49 @@ and then for the supplementary observations
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 ```
+## Heatmap for the correlations between qualitative variables
+
+
+The equivalent of a correlation matrix can be obtained in MCA
+by computing the $\phi^2$ correlation matrix associated to
+the Burt-table derived from the 0/1 matrix.
+This is obtained from the following code:
+```{r phi2}
+# Pseudo Heat Map. Correlation ----
+# We need correlation to compare with PCA
+corrMatBurt.list <- phi2Mat4BurtTable(cleanData)
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+
+corr4MCA.r <- corrplot::corrplot(
+         as.matrix(corrMatBurt.list$phi2.mat), 
+         method="color", col=col(200),  
+         type="upper", 
+         addCoef.col = "black", # Add coefficient of correlation
+         tl.col=color4Var, 
+         tl.srt = 45, #Text label color and rotation
+         number.cex = .5,
+         diag = TRUE # needed to have the color of variables correct
+         )
+# dev.new()
+a0000.corMat.phi <- recordPlot()
+```
+
 
 ## Variable contributions
 
+The contributions for the variables can be obtained from the function
+`data4PCCAR::ctr4Variables` as:
 ```{r ctrVar}
-# Extract the root names before the "."
-varNames <- stringi::stri_extract(rownames(cJ),regex = '[^.]*')
-varCtr.tmp <- aggregate(cJ ~ varNames, (cbind(varNames,cJ)),sum)
-varCtr <- varCtr.tmp[,-1]
-rownames(varCtr)    <- varCtr.tmp[,1]
-rownames(color4Var) <- varCtr.tmp[,1]
+varCtr <- data4PCCAR::ctr4Variables(cJ) 
+rownames(color4Var) <- rownames(varCtr)
 ```
 
-The variable contributions show the variables important for
-a given dimension. 
+
 The contribution of a variable is the sum of the contributions 
-of all its levels
+of all its levels, this parameter 
+measures the importance of this variable
+ for
+a given dimension. 
 
 ```{r ctrVar.Tab}
 nFact <- min(5, ncol(cJ) - 1)
@@ -443,7 +485,7 @@ TableWithTitle <- gTree(children = gList(ctrTable, title))
 # recordPlot() will fail and the graph will not be saved in the powerpoint
 # and will generate a strange error message
 grid.draw(TableWithTitle)
-# a00.1.ctrTable  <- recordPlot()
+#a0000.2.ctrTable  <- recordPlot()
 ```
 
 
@@ -465,17 +507,12 @@ laTable <- round(varCtr[,1:nFact]*1000)
 
 To create graphics we will 
 color the different labels of a variable with the same color.
-First we create the vector storing the color.
-
-```{r }
-nM   <- nrow(cJ)
-nVar <- nrow(color4Var)
-col4Labels <- rep("",nM)
-
-for (i in 1:nVar){
-  lindex <- varNames %in% rownames(color4Var)[i]
-  col4Labels[lindex] <- color4Var[i]
-}
+First we create the vector storing the color with the function
+`data4PCCAR::coloringLevels`:
+```{r color4Levels}
+col4Levels <- data4PCCAR::coloringLevels(
+                       rownames(resMCA$ExPosition.Data$fj), color4Var)
+col4Labels <- col4Levels$color4Levels
 ```
 
 
@@ -484,39 +521,57 @@ we can display the contributions with some bar plots.
 Note that these bar plots need some "tweaking" to correctly
 works.
 
-#### Variable contributions Dimension 1.
+### Variable contributions Dimension 1.
 
 ```{r ctrV1}
 varCtr1 <- varCtr[,1]
 names(varCtr1) <- rownames(varCtr)
-a000.Var.ctr1  <- PrettyBarPlot2(varCtr1,
+a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
                     main = 'Variable Contributions: Dimension 1',
-                                ylim = c(0.3, 1.2*max(varCtr1)),
+                                ylim = c(-.03, 1.2*max(varCtr1)),
                                 threshold = 1 / nrow(varCtr),
                                 color4bar = gplots::col2hex(color4Var)
 )
-print(a000.Var.ctr1)
+print(a0005.Var.ctr1)
 ```
 
-#### Variable contributions Dimension 2.
+### Variable contributions Dimension 2.
 
 
 
 ```{r ctrV2}
 varCtr2 <- varCtr[,2]
 names(varCtr2) <- rownames(varCtr)
-a000.Var.ctr2  <- PrettyBarPlot2(varCtr2,
+a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
                     main = 'Variable Contributions: Dimension 2',
                                 ylim = c(-.03, 1.2*max(varCtr2)),
                                 threshold = 1 / nrow(varCtr),
                                 color4bar = gplots::col2hex(color4Var)
 )
-print(a000.Var.ctr2)
+print(a0006.Var.ctr2)
 ```
+
+### Variable contributions Dimension 3.
+
+
+
+```{r ctrV3}
+varCtr3 <- varCtr[,3]
+names(varCtr3) <- rownames(varCtr)
+a0006.Var.ctr3  <- PrettyBarPlot2(varCtr3,
+                    main = 'Variable Contributions: Dimension 3',
+                                ylim = c(-.03, 1.2*max(varCtr2)),
+                                threshold = 1 / nrow(varCtr),
+                                color4bar = gplots::col2hex(color4Var)
+)
+print(a0006.Var.ctr3)
+```
+
+
 #### Pseudo factor plots with variable contributions
 
-Another way to visualize the variable contribution is
-to use pseudo-factor plor with the contributions:
+Another way to visualize the variable contributions is
+to use a pseudo-factor plot with the contributions:
 
 ```{r ctrV12}
 ctrV12 <- PTCA4CATA::createFactorMap(X =  varCtr, 
@@ -534,24 +589,100 @@ ctr.labels <- createxyLabels.gen(
   1,2, lambda = resMCA$ExPosition.Data$eigs,
   tau = resMCA$ExPosition.Data$t
 )
-a000.Var.ctr12  <- ctrV12$zeMap  + ctr.labels
+a0007.Var.ctr12  <- ctrV12$zeMap  + ctr.labels
 #
-print(a000.Var.ctr12)
+print(a0007.Var.ctr12)
+
+```
+### Add a contribution plot with important variables only
+
+```{r getCtr12}
+absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
+varCtr12  <- (absCtrVar[,1] + absCtrVar[,2]) / 
+   (resMCA$ExPosition.Data$eigs[1] + resMCA$ExPosition.Data$eigs[2])
+importantVar <- (varCtr12 >=  1 / length(varCtr12))
+col4ImportantVar <- color4Var
+col4NS <- 'gray90' 
+col4ImportantVar[!importantVar] <- col4NS
+```
+
+
+
+```{r ctrV12.ns}
+ctrV12.imp <- PTCA4CATA::createFactorMap(X =  varCtr, 
+                        title = "Important Variables: Contributions", 
+                        col.points = col4ImportantVar,
+                        col.labels = col4ImportantVar,
+                        alpha.points = 0.5,
+                        cex = 2.5, 
+                        alpha.labels = 1, 
+                        text.cex = 4,
+                        font.face = "plain", 
+                        font.family = "sans")
+a0008.Var.ctr12.imp  <- ctrV12.imp$zeMap  + ctr.labels
+#
+print(a0008.Var.ctr12.imp)
 
 ```
 
 
-## Scree for the MCA
+#### A map with Dimension 2 & 3
 
 
+```{r getCtr23}
+#absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
+varCtr23  <- (absCtrVar[,3] + absCtrVar[,2]) / 
+   (resMCA$ExPosition.Data$eigs[3] + resMCA$ExPosition.Data$eigs[2])
+importantVar23 <- (varCtr23 >=  1 / length(varCtr23))
+col4ImportantVar23 <- color4Var
+col4NS <- 'gray90' 
+col4ImportantVar23[!importantVar23] <- col4NS
+```
+
+
+
+```{r ctrV23.ns}
+ctrV23.imp <- PTCA4CATA::createFactorMap(X =  varCtr,
+                                         axis1 = 3, axis2 = 2,
+                        title = "Important Variables: Contributions 3 * 2", 
+                        col.points = col4ImportantVar23,
+                        col.labels = col4ImportantVar23,
+                        alpha.points = 0.5,
+                        cex = 2.5, 
+                        alpha.labels = 1, 
+                        text.cex = 4,
+                        font.face = "plain", 
+                        font.family = "sans")
+ctr.labels23 <- createxyLabels.gen(
+  3,2, lambda = resMCA$ExPosition.Data$eigs,
+  tau = resMCA$ExPosition.Data$t
+)
+a0009.Var.ctr23.imp  <- ctrV23.imp$zeMap  + ctr.labels23
+#
+print(a0009.Var.ctr23.imp)
+
+```
+
+## Scree for MCA
+
+
+### Plain Scree
 
 ```{r screeMCA, fig.height=4, fig.width= 7, }
-# 5.A. A scree plot for the RV coef. Using standard plot (PTCA4CATA)
 scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
-                   title = "MCA. Explained Variance per Dimension")
-a1.Scree <- recordPlot() # Save the plot
+                    title = "MCA. Explained Variance per Dimension")
+b0001a.Scree <- recordPlot() # Save the plot
 ```
 
+### Scree with inference
+
+```{r screeMCA.inf, fig.height=4, fig.width= 7, }
+scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
+               p.ev = resMCA.inf$Inference.Data$components$p.vals, 
+               plotKaiser = TRUE,
+               title = "MCA. Explained Variance per Dimension")
+b0001b.Scree <- recordPlot() # Save the plot
+```
 
 ## Variable Map
 
@@ -571,17 +702,173 @@ labels4MCA <- createxyLabels.gen(x_axis = axis1, y_axis = axis2,
                lambda = resMCA$ExPosition.Data$eigs,
                tau = resMCA$ExPosition.Data$t)
 # make the maps
-aa.1.BaseMap.Fj <- BaseMap.Fj$zeMap + labels4MCA 
-aa.2.BaseMapNoDot.Fj  <- BaseMap.Fj$zeMap_background +
+b0002.BaseMap.Fj <- BaseMap.Fj$zeMap + labels4MCA 
+b0003.BaseMapNoDot.Fj  <- BaseMap.Fj$zeMap_background +
                           BaseMap.Fj$zeMap_text + labels4MCA 
 ```
 
 ```{r plotaMap, fig.width= 8 , fig_width = '100%'}
-print(aa.1.BaseMap.Fj)
+print(b0002.BaseMap.Fj)
 ```
 
-## Map for the observations
+### Variable Map with only important variables
 
+
+```{r mapJ-grey}
+col4Levels.imp <- data4PCCAR::coloringLevels(rownames(Fj),
+                                             col4ImportantVar)
+BaseMap.Fj.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
+                              axis1 = axis1, axis2 = axis2,
+                              title = 'MCA. Important Variables', 
+                      col.points = col4Levels.imp$color4Levels, 
+                              cex = 1,
+                      col.labels = col4Levels.imp$color4Levels, 
+                              text.cex = 2.5,
+                              force = 2)
+b0010.BaseMap.Fj <- BaseMap.Fj.imp$zeMap + labels4MCA 
+print(b0010.BaseMap.Fj)
+```
+
+
+### Map with important variables and lines
+
+The MCA map for the variables is easier to read when the 
+levels of the qualitative variables are linked to each other with
+lines as show below
+
+```{r adLines}
+lines4J <- addLines4MCA(Fj, col4Var = col4Levels.imp$color4Variables, size = .7)
+ b0020.BaseMap.Fj <-  b0010.BaseMap.Fj + lines4J
+ print( b0020.BaseMap.Fj)
+```
+
+
+```{r someLines}
+zeNames          <- getVarNames(rownames(Fj)) 
+importantsLabels <- zeNames$stripedNames %in% zeNames$variableNames[importantVar]
+Fj.imp <- Fj[importantsLabels,]
+lines4J.imp <- addLines4MCA(Fj.imp, 
+                            col4Var = col4Levels$color4Variables[which(importantVar)], 
+                            size = .9, linetype = 3, alpha = .5)
+ b0021.BaseMap.Fj <-  b0020.BaseMap.Fj + lines4J.imp
+ print( b0021.BaseMap.Fj)
+```
+
+
+### Map with important variables and lines dimension 2 & 3
+
+Have a look at the map for Dimensions 2 and 3.
+
+
+
+
+### Bootstrap ratios
+
+Just like in PCA, the significance of
+each column (i.e., level of a qualitative variable) can be assessed
+with a bootstrap rations.
+For example, the bootstrap ratios for all levels of all
+qualitative variables for Dimension 1 are plotted as
+
+```{r BR1}
+
+c0001.Levels.BR  <- PrettyBarPlot2(
+      resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios[,1], # BR
+                    main = 'Bootstrap Ratios for Columns : Dimension 1',
+                             threshold = 2,
+                             color4bar = gplots::col2hex(col4Labels)
+)
+print(c0001.Levels.BR)
+```
+
+
+### Qualitative variables pseudo-*F*
+
+If we assume
+that all levels of the variable are balanced
+Pseudo-$F$ ratios 
+for the $K$ qualitative variables
+can also be obtained from the bootstrap ratios 
+with the formula:
+ $$F_j = \frac{J_k}{J_k-1} \sum_{j}^{J_k} t_{k}^2$$ 
+where $J_k$ (respectively $t_k$) is the number of levels 
+(respectively bootstrap ratio)
+for the $k$-th qualitative variable.
+
+If we want to take into account the frequency of the different
+levels of a qualitative variable, and
+if we denote by $w_{j(k)}$ the frequency of level $j$ of the
+$k$-th variable, the pseudo-$F$ ratios can be computed as:
+$$F_k = \frac{1}{J_k-1} \sum_{j}^{J_k} w_{j(k)} t^2.$$
+
+These pseudo-$F$ ratios 
+evaluates if a dimension of the MCA creates  a reliable 
+difference between the levels of a qualitative variable;
+by contrast, a column bootstrap ratio evaluates 
+if this column systematically loads on the same side of
+a dimension.
+
+```{r BR4var}
+# Get the pseudo Bootstrqp Rqtios
+BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
+wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
+nIter    <- 1000
+Br4Variables <- data4PCCAR::BR4varMCA(BrLevels, wJ, nIter) 
+```
+
+#### Pseudo-BR Dimension 1
+
+
+```{r BR41}
+VarBR1 <- Br4Variables$pseudoBR.pos[,1]
+c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
+                               ylim = 2,
+                                threshold = 2,
+                                color4bar = gplots::col2hex(color4Var)
+)
+print(c0010.Var.br1)
+```
+
+#### Pseudo-BR Dimension 2
+
+
+```{r BR42}
+VarBR2 <- Br4Variables$pseudoBR.pos[,2]
+c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
+                               ylim = 2,
+                                threshold = 2,
+                                color4bar = gplots::col2hex(color4Var)
+)
+print(c0011.Var.br2)
+```
+
+#### Pseudo-BR Dimension 3
+
+
+```{r BR43}
+VarBR3 <- Br4Variables$pseudoBR.pos[,3]
+c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
+                               ylim = 2,
+                               threshold = 2,
+                               color4bar = gplots::col2hex(color4Var)
+)
+print(c0012.Var.br3)
+```
+
+### Pseudo-Bootstrapped Map for Levels of Variables
+
+In a similar way to the graphs of the Levels of the qualitative
+variables based on contributions we can also plot 
+ graphs of the Levels of the qualitative
+variables based on the bootstrap ratios,
+These will look very similar, with the exception of the variable 
+`occupation`, which has an important contribution but a 
+non-significant pseudo bootstrap ratio.
+
+## Map for the observations
 
 Here we will color the observations by `nation,` 
 to evaluate if this variable is
@@ -602,17 +889,78 @@ BaseMap.Fi <- createFactorMap(X = Fi , # resMCA$ExPosition.Data$fj,
                               axis1 = axis1, axis2 = axis2,
                               title = 'MCA. Observations (by nation)', 
                               col.points = col4I.City,
-                              alpha.points = .2, cex = .8,
+                              alpha.points = .4, cex = .9,
                               col.labels = col4I.City,
                               text.cex = 2.5, 
                               force = 2)
 # make the maps
-aa.5.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
+d0001.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
                                   BaseMap.Fi$zeMap_dots + labels4MCA 
 ```
 
 ```{r plotaMapi, fig.width= 8 }
-print(aa.5.BaseMapNoLabels.Fi)
+print(d0001.BaseMapNoLabels.Fi)
+```
+
+## Add Group Means, Confidence, and Tolerance Intervals
+
+
+### Group Means
+
+```{r Boot4CI}
+# Bootstrap for CI:
+BootCube.Gr <- PTCA4CATA::Boot4Mean(resMCA$ExPosition.Data$fi, 
+                                 design = cleanData$nation,
+                                 niter = 100,
+                                 suppressProgressBar = TRUE)
+nationsMeans <- PTCA4CATA::getMeans(resMCA$ExPosition.Data$fi, cleanData$nation)
+# colCity <- c('darkblue', 'red4')
+MapGroup <- PTCA4CATA::createFactorMap(nationsMeans,
+                            # use the constraint from the main map
+                            constraints = BaseMap.Fi$constraints,
+                            col.points = colCity,
+                            cex = 7,  # size of the dot (bigger)
+                            col.labels = colCity,
+                            text.cex = 6)
+d002.Map.I.withMeans <- d0001.BaseMapNoLabels.Fi  +
+                          MapGroup$zeMap_dots + MapGroup$zeMap_text
+print(d002.Map.I.withMeans)
+```
+
+### With bootstrapped confidence intervals 
+
+```{r graphElli}
+GraphElli <- PTCA4CATA::MakeCIEllipses(BootCube.Gr$BootCube[,1:2,],
+                            names.of.factors = c("Dimension 1","Dimension 2"),
+                            col = colCity,
+                            p.level = .95)
+d003.Map.I.withCI <-  d0001.BaseMapNoLabels.Fi + 
+                          MapGroup$zeMap_text +  GraphElli
+print(d003.Map.I.withCI)
+```
+
+### With Tolerance convex hulls
+
+```{r TI}
+GraphTI.Hull <- PTCA4CATA::MakeToleranceIntervals(resMCA$ExPosition.Data$fi,
+                            design = as.factor(cleanData$nation),
+                            # line below is needed
+                            names.of.factors =  c("Dim1","Dim2"), # needed 
+                            col = colCity,
+                            line.size = .50, 
+                            line.type = 3,
+                            alpha.ellipse = .2,
+                            alpha.line    = .4,
+                            p.level       = .75)
+#_____________________________________________________________________
+# Create the map:
+d005.Map.I.withTIHull <- d002.Map.I.withMeans  +
+                           GraphTI.Hull + MapGroup$zeMap_dots +
+                           MapGroup$zeMap_text + MapGroup$zeMap_dots
+#_____________________________________________________________________
+# plot it
+dev.new()
+print(d005.Map.I.withTIHull)
 ```
 
 ## Projecting a subsample
@@ -633,7 +981,7 @@ BaseMap.Fi.sup <- createFactorMap(X = Fi.sup , # resMCA$ExPosition.Data$fj,
                               text.cex = 2.5,
                               force = 2)
 # make the maps
-aa.7.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
+e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
                                    BaseMap.Fi.sup$zeMap_dots + 
                                    BaseMap.Fi.sup$zeMap_text + 
                                    BaseMap.Fi$zeMap_dots +
@@ -641,7 +989,7 @@ aa.7.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
 ```
 
 ```{r plotaMapi.sup, fig.width= 8 }
- print(aa.7.BaseMapNoLabels.Fi.sup)
+ print(e0001.BaseMapNoLabels.Fi.sup)
 ```
 
 # Save the graphics as a PowerPoint
