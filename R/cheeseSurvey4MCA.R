@@ -7,12 +7,13 @@
 #'@title An excel file for the data of
 #' a survey questionnaire to be analyzed by MCA.
 #'
-#'@description \code{beersNovicesExpertsCATA}:
+#'@description \code{cheeseSurvey4MCA}:
 #' An excel file
 #' storing the data from an attitude survey:
 #' 305 (French) consumers
 #' described their attitude, consumption, and knowledge about
-#'  cheese (Maroille).
+#' a 
+#'  cheese (Maroille) made in northen France.
 #'  These data are analyzed with multiple correspondence analysis
 #'  with the packages \code{ExPosition} and \code{PTCA4CATA}
 #' (note that the package
@@ -32,9 +33,9 @@
 #'
 #' @references
 #'  These data were used in a dissertation on
-#'  Cheese consumption in France Menouar Nacef
-#'  under the direction of Sylvie Chollet.
-#' @keywords datasets DistatisR
+#'  Cheese consumption in France written by  Menouar Nacef
+#'  under the direction of Professor Sylvie Chollet.
+#' @keywords datasets R4SPISE2014
 #' @author  Nacef, M., & Chollet, S.
 #' @name cheeseSurvey4MCA
 #' @section FileName: cheeseSurvey4MCA.xlsx
@@ -49,7 +50,7 @@
 #'                                          sheet = "Feuil1")
 #'           }
 NULL
-# End of  beersNovicesExpertsCATA----
+# End of  cheeseSurvey4MCA ----
 #_____________________________________________________________________
 
 

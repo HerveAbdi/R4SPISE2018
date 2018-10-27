@@ -17,13 +17,13 @@
 #'
 #'@details
 #' This is a standard \code{Words} file.
-#' THe questions are in the original French language,
-#' and English version will come soon.
+#' The questions are in the original French language,
+#' an English version will come soon.
 #'
 #' @references
 #'  These data were used in a dissertation on
-#'  Cheese consumption in France Menouar Nacef
-#'  under the direction of Sylvie Chollet.
+#'  Cheese consumption in France by Menouar Nacef
+#'  under the direction of Professor Sylvie Chollet.
 #' @keywords datasets DistatisR
 #' @author  Nacef, M., & Chollet, S.
 #' @name questionsCheeseSurvey

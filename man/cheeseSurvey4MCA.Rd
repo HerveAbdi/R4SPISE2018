@@ -5,12 +5,13 @@
 \title{An excel file for the data of
 a survey questionnaire to be analyzed by MCA.}
 \description{
-\code{beersNovicesExpertsCATA}:
+\code{cheeseSurvey4MCA}:
 An excel file
 storing the data from an attitude survey:
 305 (French) consumers
 described their attitude, consumption, and knowledge about
- cheese (Maroille).
+a 
+ cheese (Maroille) made in northen France.
  These data are analyzed with multiple correspondence analysis
  with the packages \code{ExPosition} and \code{PTCA4CATA}
 (note that the package
@@ -86,8 +87,8 @@ cheeseDATA <- PTCA4CATA::read.xls.CATA(path = path2file,
 }
 \references{
 These data were used in a dissertation on
- Cheese consumption in France Menouar Nacef
- under the direction of Sylvie Chollet.
+ Cheese consumption in France written by  Menouar Nacef
+ under the direction of Professor Sylvie Chollet.
 
 These data were used in a dissertation on
  Cheese consumption in France Menouar Nacef
@@ -99,4 +100,5 @@ Nacef, M., & Chollet, S.
 Nacef, M., & Chollet, S.
 }
 \keyword{DistatisR}
+\keyword{R4SPISE2014}
 \keyword{datasets}

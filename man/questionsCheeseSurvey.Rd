@@ -15,8 +15,8 @@ examples \code{cheeseSurvey4MCA.xlsx} and
 }
 \details{
 This is a standard \code{Words} file.
-THe questions are in the original French language,
-and English version will come soon.
+The questions are in the original French language,
+an English version will come soon.
 }
 \section{FileName}{
  questionsCheeseSurvey.docx
@@ -36,8 +36,8 @@ path2file <- system.file("extdata",
 }
 \references{
 These data were used in a dissertation on
- Cheese consumption in France Menouar Nacef
- under the direction of Sylvie Chollet.
+ Cheese consumption in France by Menouar Nacef
+ under the direction of Professor Sylvie Chollet.
 }
 \author{
 Nacef, M., & Chollet, S.

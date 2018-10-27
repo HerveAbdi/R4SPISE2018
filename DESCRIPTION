@@ -13,7 +13,7 @@ Imports: ExPosition, PTCA4CATA, DistatisR, ggplot2, coin, car, dplyr,
 Depends: R (>= 3.5.0)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.0.9000
 VignetteBuilder: utils,
     knitr
 URL: http://github.com/HerveAbdi/R4SPISE2018

@@ -110,7 +110,7 @@ Make sure that your start this analysis a new `Rproject` so that
 the default directory will be correctly set.
 
 Before we start the analysis,
-we need to have our standard packages installed from `Github`) 
+we need to have our standard packages installed (some from `Github`) 
 and the corresponding libraries loaded:
 
 * `Distatis`
@@ -118,6 +118,7 @@ and the corresponding libraries loaded:
 * `InPosition`
 * `PTCA4CTA`
 * `R4SPISE2018`
+* `data4PCCAR`
 * `dplyr` (to recode the data)
 * `car`   (to recode the data)
 * `grid`, `gridExtra`, and `gTable` 
@@ -207,9 +208,9 @@ knitr::include_graphics('../man/figures/fermentationXlsFile.png')
 ### To replicate with different data
 
 When you record you own data,
-make sure that you follow the same format, this way the script
+make sure that you follow the same format, this way, the script
 described in this vignette will apply 
-to your own analysis with minimal change.
+to your own analysis with minimal changes.
 
 ### The general analytic strategy
 
@@ -269,12 +270,16 @@ The variables `fish` to `meat` were answers to the question
 The variables `quality` to `clear` were Likert scales 
 (answers from 1 to 4) about statements on fermentation;
 These Likert scales were recoded as  `A` (agree) and
-`D` (disagree). `Sex` is coded as `M` vs `W`.
-the variable `Age` is coded as less then 25 (`<25`) and
-more than 25 (`>25`). 
-Occupation was binarized as "Food or microbiology" (`FM`)
-versus `other`. 
-Nationality (`nation`) had two levels French (`F`) versus
+`D` (disagree). 
+
+The following set of variables  corresponds to the demographics of the
+participants:
+`Sex`, coded as `M` vs `W`;
+`Age`, coded as less then 25 (`<25`) and
+more than 25 (`>25`); 
+Occupation binarized as "Food or microbiology" (`FM`)
+versus `other` and 
+Nationality (`nation`) code with two levels French (`F`) versus
 Vietnamese (`VN`). 
 
 To know more about the questions, you can have a look at 
@@ -289,8 +294,15 @@ we only kept
 questions that created differences
 between the respondents.
 
-In addition, we have some information about the respondents:
-Sex `(sex)`, Age `(age)`, their country of residence `(nation)`.
+### Supplementary Variables
+
+
+Here we decided to treat
+as supplemtary variables 
+the demographics of the respondents:
+Sex `(sex)`, Age `(age)`, `occupation` and 
+their country of residence `(nation)`.
+
 
 ## Selection and recoding
 
@@ -358,16 +370,21 @@ the supplementary set
 ```{r cleanData}
 cleanData.tmp <- temp.df
 cleanData.tmp <- cleanData.tmp[complete.cases(cleanData.tmp),]
-cleanData     <- cleanData.tmp[cleanData.tmp[,1] == 'A', 2:ncol(cleanData.tmp)]
-cleanData.sup <- cleanData.tmp[cleanData.tmp[,1] == 'S', 2:ncol(cleanData.tmp)]
+cleanData.allVar <- cleanData.tmp[cleanData.tmp[,1] == 'A', 2:ncol(cleanData.tmp)]
+cleanData.varSup <- cleanData.allVar[,1:4]
+cleanData        <- cleanData.allVar[,5:ncol(cleanData.allVar)]
+cleanData.sup <- cleanData.tmp[cleanData.tmp[,1] == 'S', 6:ncol(cleanData.tmp)]
 ```
 
-The dataframe is now ready to be analyzed 
-with multiple correspondence analysis 
+The different dataframes are now ready to be analyzed 
+with multiple correspondence analysis:
+* `cleanData` contains the active observations and variables,
+* `cleanData.sup` contains the supplementary observations,
+* `cleanData.varSup` contains the supplemtary variables.
 
 # Multiple Correspondence Analysis
 
-## MCA for the active data set
+## MCA for the active set
 
 We use the package `ExPosition` to compute the MCA
 ```{r runMCA}
@@ -393,12 +410,22 @@ All this is done with the code below
 testclean <- makeNominalData(rbind(cleanData,cleanData.sup))
 clean.Sup <-  testclean[cleanData.tmp[,1] == 'S',]
 # barycentric code for nation
-clean.Sup[,(colnames(testclean) %in% 'nation.F')] <- .5
-clean.Sup[,(colnames(testclean) %in% 'nation.V')] <- .5
+#clean.Sup[,(colnames(testclean) %in% 'nation.F')] <- .5
+#clean.Sup[,(colnames(testclean) %in% 'nation.V')] <- .5
 #
 resMCA.sup <- supplementaryRows(SUP.DATA = clean.Sup, res = resMCA)
 colnames(resMCA.sup$fii) <- paste0('Dimension ',
                                 1:ncol(resMCA.sup$fii))
+```
+
+## Supplementary variables.
+
+```{r runMCA.varsup}
+#
+resMCA.varSup <- supplementaryCols(SUP.DATA = makeNominalData(cleanData.varSup),
+                                        res = resMCA)
+colnames(resMCA.varSup$fjj) <- paste0('Dimension ',
+                                1:ncol(resMCA.varSup$fjj))
 ```
 
 ## Inferences
@@ -433,13 +460,14 @@ corrMatBurt.list <- phi2Mat4BurtTable(cleanData)
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
 corr4MCA.r <- corrplot::corrplot(
-         as.matrix(corrMatBurt.list$phi2.mat), 
+         as.matrix(corrMatBurt.list$phi2.mat^(1/2)), 
          method="color", col=col(200),  
          type="upper", 
          addCoef.col = "black", # Add coefficient of correlation
-         tl.col=color4Var, 
+         tl.col = color4Var, 
+         tl.cex = .9,
          tl.srt = 45, #Text label color and rotation
-         number.cex = .5,
+         number.cex = .8,
          diag = TRUE # needed to have the color of variables correct
          )
 # dev.new()
@@ -528,7 +556,8 @@ varCtr1 <- varCtr[,1]
 names(varCtr1) <- rownames(varCtr)
 a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
                     main = 'Variable Contributions: Dimension 1',
-                                ylim = c(-.03, 1.2*max(varCtr1)),
+                                ylim = c(-.05, 1.2*max(varCtr1)),
+                                font.size = 5,
                                 threshold = 1 / nrow(varCtr),
                                 color4bar = gplots::col2hex(color4Var)
 )
@@ -544,8 +573,9 @@ varCtr2 <- varCtr[,2]
 names(varCtr2) <- rownames(varCtr)
 a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
                     main = 'Variable Contributions: Dimension 2',
-                                ylim = c(-.03, 1.2*max(varCtr2)),
+                                ylim = c(-.05, 1.2*max(varCtr2)),
                                 threshold = 1 / nrow(varCtr),
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(a0006.Var.ctr2)
@@ -560,8 +590,9 @@ varCtr3 <- varCtr[,3]
 names(varCtr3) <- rownames(varCtr)
 a0006.Var.ctr3  <- PrettyBarPlot2(varCtr3,
                     main = 'Variable Contributions: Dimension 3',
-                                ylim = c(-.03, 1.2*max(varCtr2)),
+                                ylim = c(-.05, 1.2*max(varCtr2)),
                                 threshold = 1 / nrow(varCtr),
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(a0006.Var.ctr3)
@@ -755,18 +786,68 @@ lines4J.imp <- addLines4MCA(Fj.imp,
 ```
 
 
-### Map with important variables and lines dimension 2 & 3
+### Map with important variables and lines for Dimensions 2 & 3
 
 Have a look at the map for Dimensions 2 and 3.
 
 
+### Maps with important and supplementary variables
 
+To facilitate the interpretations of the map,
+we can add the supplementary variables to the variable map,
+as shown below:
+
+```{r mapvarSup}
+col4VarSup <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData.varSup))
+Fj.sup <- resMCA.varSup$fjj
+col4Levels.sup <- data4PCCAR::coloringLevels(rownames(Fj.sup), col4VarSup)
+BaseMap.Fj.sup <- createFactorMap(X = Fj.sup , # resMCA$ExPosition.Data$fj,
+                axis1 = axis1, axis2 = axis2,
+                constraints  = BaseMap.Fj$constraints, # to get same size
+                title = 'MCA. Supplementary and Important Variables', 
+                col.points = col4Levels.sup$color4Levels, 
+                              cex = 1,
+                col.labels = col4Levels.sup$color4Levels, 
+                text.cex = 2.5,
+                force = 2)
+lines4J.sup <- addLines4MCA(Fj.sup, 
+                  col4Var = col4Levels.sup$color4Variables, size = .7)
+b0030.Sup.Fj <- BaseMap.Fj.sup$zeMap + 
+                     BaseMap.Fj.imp$zeMap_dots + 
+                     BaseMap.Fj.imp$zeMap_text +
+                     labels4MCA + 
+                     lines4J + lines4J.sup
+print(b0030.Sup.Fj)
+```
+
+This last map can easier to read if we plot only the supplementary 
+variables.
+
+```{r mapvarSup.only}
+b0031.Sup.Fj.only <- BaseMap.Fj.sup$zeMap + 
+                     BaseMap.Fj.imp$zeMap_dots + 
+                     labels4MCA + 
+                      lines4J.sup
+print(b0031.Sup.Fj.only)
+```
+
+
+The plots of the supplementary variables suggest that
+Dimension 1 expresses a difference between young, (often food professionals), 
+Vietnamese respondents versus older, (mostly non food professional), 
+French respondents 
+(a pattern indicating a potential confound of the `age` and
+`nation` variables).
+We will explore this difference between Vietnamese 
+and French respondents by coloring,
+in their maps, the respondents according to their nationality.
+ 
 
 ### Bootstrap ratios
 
 Just like in PCA, the significance of
 each column (i.e., level of a qualitative variable) can be assessed
-with a bootstrap rations.
+with a bootstrap ratio.
 For example, the bootstrap ratios for all levels of all
 qualitative variables for Dimension 1 are plotted as
 
@@ -785,8 +866,8 @@ print(c0001.Levels.BR)
 ### Qualitative variables pseudo-*F*
 
 If we assume
-that all levels of the variable are balanced
-Pseudo-$F$ ratios 
+that all levels of the variable are balanced,
+pseudo-$F$ ratios 
 for the $K$ qualitative variables
 can also be obtained from the bootstrap ratios 
 with the formula:
@@ -806,10 +887,10 @@ evaluates if a dimension of the MCA creates  a reliable
 difference between the levels of a qualitative variable;
 by contrast, a column bootstrap ratio evaluates 
 if this column systematically loads on the same side of
-a dimension.
+a given dimension.
 
 ```{r BR4var}
-# Get the pseudo Bootstrqp Rqtios
+# Get the pseudo Bootstrap Rqtios
 BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
 wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
 nIter    <- 1000
@@ -825,6 +906,7 @@ c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
                                ylim = 2,
                                 threshold = 2,
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(c0010.Var.br1)
@@ -839,6 +921,7 @@ c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
                                ylim = 2,
                                 threshold = 2,
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(c0011.Var.br2)
@@ -853,6 +936,7 @@ c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
                                ylim = 2,
                                threshold = 2,
+                               font.size = 5,
                                color4bar = gplots::col2hex(color4Var)
 )
 print(c0012.Var.br3)
@@ -870,9 +954,11 @@ non-significant pseudo bootstrap ratio.
 
 ## Map for the observations
 
-Here we will color the observations by `nation,` 
-to evaluate if this variable is
-an important source of variation for this data set.
+Here we  color the observations by `nation,` 
+to better understand how this variable 
+could explain some of the  variability in for this data set
+(the projection of `nation` as a supplementary variable
+was already suggesting that this variable is realted to Dimension 1).
 
 ```{r createFiMap}
 Fi <- resMCA$ExPosition.Data$fi
@@ -881,7 +967,7 @@ nI <- nrow(Fi)
 col4I.City <- rep("",nI)
 
 for (i in 1:length(colCity) ){
-  lindex <- cleanData[,'nation'] %in% unique(cleanData[,'nation'])[i]
+  lindex <- cleanData.allVar[,'nation'] %in% unique(cleanData.allVar[,'nation'])[i]
   col4I.City[lindex] <- colCity[i]
 }
 # generate the set of maps
@@ -910,10 +996,10 @@ print(d0001.BaseMapNoLabels.Fi)
 ```{r Boot4CI}
 # Bootstrap for CI:
 BootCube.Gr <- PTCA4CATA::Boot4Mean(resMCA$ExPosition.Data$fi, 
-                                 design = cleanData$nation,
+                                 design = cleanData.allVar$nation,
                                  niter = 100,
                                  suppressProgressBar = TRUE)
-nationsMeans <- PTCA4CATA::getMeans(resMCA$ExPosition.Data$fi, cleanData$nation)
+nationsMeans <- PTCA4CATA::getMeans(resMCA$ExPosition.Data$fi, cleanData.allVar$nation)
 # colCity <- c('darkblue', 'red4')
 MapGroup <- PTCA4CATA::createFactorMap(nationsMeans,
                             # use the constraint from the main map
@@ -943,7 +1029,7 @@ print(d003.Map.I.withCI)
 
 ```{r TI}
 GraphTI.Hull <- PTCA4CATA::MakeToleranceIntervals(resMCA$ExPosition.Data$fi,
-                            design = as.factor(cleanData$nation),
+                            design = as.factor(cleanData.allVar$nation),
                             # line below is needed
                             names.of.factors =  c("Dim1","Dim2"), # needed 
                             col = colCity,
@@ -965,6 +1051,11 @@ print(d005.Map.I.withTIHull)
 
 ## Projecting a subsample
 
+Here we project in the observation sapce the data
+obtained from the 30 participants of the `SPISE2018`
+(for these participants, if you remember your ID number
+you can find out where you are ...).
+
 ```{r createFiMap.sup}
 Fi.sup  <- resMCA.sup$fii
 col     <- 'green'  
@@ -985,6 +1076,7 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
                                    BaseMap.Fi.sup$zeMap_dots + 
                                    BaseMap.Fi.sup$zeMap_text + 
                                    BaseMap.Fi$zeMap_dots +
+  ggplot2::ggtitle('MCA Active and Supplementary Observations') +
                                    labels4MCA 
 ```
 
@@ -992,9 +1084,12 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
  print(e0001.BaseMapNoLabels.Fi.sup)
 ```
 
+Not surpringly, the participants of the SPISE2018 meeting
+are projected close to the Vietnamese participants.
+
 # Save the graphics as a PowerPoint
 
-The graphics are saved as a power point called
+The graphics are saved as a powerpoint presentation called
 ``r name4Graphs``
 with the following command
 

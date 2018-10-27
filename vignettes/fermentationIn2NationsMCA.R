@@ -139,8 +139,10 @@ temp.df[,'nation'] <- plyr::mapvalues(temp.df[,'nation'],
 ## ----cleanData-----------------------------------------------------------
 cleanData.tmp <- temp.df
 cleanData.tmp <- cleanData.tmp[complete.cases(cleanData.tmp),]
-cleanData     <- cleanData.tmp[cleanData.tmp[,1] == 'A', 2:ncol(cleanData.tmp)]
-cleanData.sup <- cleanData.tmp[cleanData.tmp[,1] == 'S', 2:ncol(cleanData.tmp)]
+cleanData.allVar <- cleanData.tmp[cleanData.tmp[,1] == 'A', 2:ncol(cleanData.tmp)]
+cleanData.varSup <- cleanData.allVar[,1:4]
+cleanData        <- cleanData.allVar[,5:ncol(cleanData.allVar)]
+cleanData.sup <- cleanData.tmp[cleanData.tmp[,1] == 'S', 6:ncol(cleanData.tmp)]
 
 ## ----runMCA--------------------------------------------------------------
 resMCA <- epMCA(cleanData, graphs = FALSE) 
@@ -150,12 +152,19 @@ resMCA <- epMCA(cleanData, graphs = FALSE)
 testclean <- makeNominalData(rbind(cleanData,cleanData.sup))
 clean.Sup <-  testclean[cleanData.tmp[,1] == 'S',]
 # barycentric code for nation
-clean.Sup[,(colnames(testclean) %in% 'nation.F')] <- .5
-clean.Sup[,(colnames(testclean) %in% 'nation.V')] <- .5
+#clean.Sup[,(colnames(testclean) %in% 'nation.F')] <- .5
+#clean.Sup[,(colnames(testclean) %in% 'nation.V')] <- .5
 #
 resMCA.sup <- supplementaryRows(SUP.DATA = clean.Sup, res = resMCA)
 colnames(resMCA.sup$fii) <- paste0('Dimension ',
                                 1:ncol(resMCA.sup$fii))
+
+## ----runMCA.varsup-------------------------------------------------------
+#
+resMCA.varSup <- supplementaryCols(SUP.DATA = makeNominalData(cleanData.varSup),
+                                        res = resMCA)
+colnames(resMCA.varSup$fjj) <- paste0('Dimension ',
+                                1:ncol(resMCA.varSup$fjj))
 
 ## ----inferences, message = FALSE, warning = FALSE, results= FALSE--------
 resMCA.inf <- epMCA.inference.battery(cleanData, graphs = FALSE)
@@ -171,13 +180,14 @@ corrMatBurt.list <- phi2Mat4BurtTable(cleanData)
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
 corr4MCA.r <- corrplot::corrplot(
-         as.matrix(corrMatBurt.list$phi2.mat), 
+         as.matrix(corrMatBurt.list$phi2.mat^(1/2)), 
          method="color", col=col(200),  
          type="upper", 
          addCoef.col = "black", # Add coefficient of correlation
-         tl.col=color4Var, 
+         tl.col = color4Var, 
+         tl.cex = .9,
          tl.srt = 45, #Text label color and rotation
-         number.cex = .5,
+         number.cex = .8,
          diag = TRUE # needed to have the color of variables correct
          )
 # dev.new()
@@ -228,7 +238,8 @@ varCtr1 <- varCtr[,1]
 names(varCtr1) <- rownames(varCtr)
 a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
                     main = 'Variable Contributions: Dimension 1',
-                                ylim = c(-.03, 1.2*max(varCtr1)),
+                                ylim = c(-.05, 1.2*max(varCtr1)),
+                                font.size = 5,
                                 threshold = 1 / nrow(varCtr),
                                 color4bar = gplots::col2hex(color4Var)
 )
@@ -239,8 +250,9 @@ varCtr2 <- varCtr[,2]
 names(varCtr2) <- rownames(varCtr)
 a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
                     main = 'Variable Contributions: Dimension 2',
-                                ylim = c(-.03, 1.2*max(varCtr2)),
+                                ylim = c(-.05, 1.2*max(varCtr2)),
                                 threshold = 1 / nrow(varCtr),
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(a0006.Var.ctr2)
@@ -250,8 +262,9 @@ varCtr3 <- varCtr[,3]
 names(varCtr3) <- rownames(varCtr)
 a0006.Var.ctr3  <- PrettyBarPlot2(varCtr3,
                     main = 'Variable Contributions: Dimension 3',
-                                ylim = c(-.03, 1.2*max(varCtr2)),
+                                ylim = c(-.05, 1.2*max(varCtr2)),
                                 threshold = 1 / nrow(varCtr),
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(a0006.Var.ctr3)
@@ -396,6 +409,35 @@ lines4J.imp <- addLines4MCA(Fj.imp,
  b0021.BaseMap.Fj <-  b0020.BaseMap.Fj + lines4J.imp
  print( b0021.BaseMap.Fj)
 
+## ----mapvarSup-----------------------------------------------------------
+col4VarSup <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData.varSup))
+Fj.sup <- resMCA.varSup$fjj
+col4Levels.sup <- data4PCCAR::coloringLevels(rownames(Fj.sup), col4VarSup)
+BaseMap.Fj.sup <- createFactorMap(X = Fj.sup , # resMCA$ExPosition.Data$fj,
+                axis1 = axis1, axis2 = axis2,
+                constraints  = BaseMap.Fj$constraints, # to get same size
+                title = 'MCA. Supplementary and Important Variables', 
+                col.points = col4Levels.sup$color4Levels, 
+                              cex = 1,
+                col.labels = col4Levels.sup$color4Levels, 
+                text.cex = 2.5,
+                force = 2)
+lines4J.sup <- addLines4MCA(Fj.sup, 
+                  col4Var = col4Levels.sup$color4Variables, size = .7)
+b0030.Sup.Fj <- BaseMap.Fj.sup$zeMap + 
+                     BaseMap.Fj.imp$zeMap_dots + 
+                     BaseMap.Fj.imp$zeMap_text +
+                     labels4MCA + 
+                     lines4J + lines4J.sup
+print(b0030.Sup.Fj)
+
+## ----mapvarSup.only------------------------------------------------------
+b0031.Sup.Fj.only <- BaseMap.Fj.sup$zeMap + 
+                     BaseMap.Fj.imp$zeMap_dots + 
+                     labels4MCA + 
+                      lines4J.sup
+print(b0031.Sup.Fj.only)
+
 ## ----BR1-----------------------------------------------------------------
 
 c0001.Levels.BR  <- PrettyBarPlot2(
@@ -407,7 +449,7 @@ c0001.Levels.BR  <- PrettyBarPlot2(
 print(c0001.Levels.BR)
 
 ## ----BR4var--------------------------------------------------------------
-# Get the pseudo Bootstrqp Rqtios
+# Get the pseudo Bootstrap Rqtios
 BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
 wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
 nIter    <- 1000
@@ -419,6 +461,7 @@ c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
                                ylim = 2,
                                 threshold = 2,
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(c0010.Var.br1)
@@ -429,6 +472,7 @@ c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
                                ylim = 2,
                                 threshold = 2,
+                                font.size = 5,
                                 color4bar = gplots::col2hex(color4Var)
 )
 print(c0011.Var.br2)
@@ -439,6 +483,7 @@ c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
                                ylim = 2,
                                threshold = 2,
+                               font.size = 5,
                                color4bar = gplots::col2hex(color4Var)
 )
 print(c0012.Var.br3)
@@ -450,7 +495,7 @@ nI <- nrow(Fi)
 col4I.City <- rep("",nI)
 
 for (i in 1:length(colCity) ){
-  lindex <- cleanData[,'nation'] %in% unique(cleanData[,'nation'])[i]
+  lindex <- cleanData.allVar[,'nation'] %in% unique(cleanData.allVar[,'nation'])[i]
   col4I.City[lindex] <- colCity[i]
 }
 # generate the set of maps
@@ -472,10 +517,10 @@ print(d0001.BaseMapNoLabels.Fi)
 ## ----Boot4CI-------------------------------------------------------------
 # Bootstrap for CI:
 BootCube.Gr <- PTCA4CATA::Boot4Mean(resMCA$ExPosition.Data$fi, 
-                                 design = cleanData$nation,
+                                 design = cleanData.allVar$nation,
                                  niter = 100,
                                  suppressProgressBar = TRUE)
-nationsMeans <- PTCA4CATA::getMeans(resMCA$ExPosition.Data$fi, cleanData$nation)
+nationsMeans <- PTCA4CATA::getMeans(resMCA$ExPosition.Data$fi, cleanData.allVar$nation)
 # colCity <- c('darkblue', 'red4')
 MapGroup <- PTCA4CATA::createFactorMap(nationsMeans,
                             # use the constraint from the main map
@@ -499,7 +544,7 @@ print(d003.Map.I.withCI)
 
 ## ----TI------------------------------------------------------------------
 GraphTI.Hull <- PTCA4CATA::MakeToleranceIntervals(resMCA$ExPosition.Data$fi,
-                            design = as.factor(cleanData$nation),
+                            design = as.factor(cleanData.allVar$nation),
                             # line below is needed
                             names.of.factors =  c("Dim1","Dim2"), # needed 
                             col = colCity,
@@ -538,6 +583,7 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
                                    BaseMap.Fi.sup$zeMap_dots + 
                                    BaseMap.Fi.sup$zeMap_text + 
                                    BaseMap.Fi$zeMap_dots +
+  ggplot2::ggtitle('MCA Active and Supplementary Observations') +
                                    labels4MCA 
 
 ## ----plotaMapi.sup, fig.width= 8-----------------------------------------
