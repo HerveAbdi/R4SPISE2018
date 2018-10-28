@@ -9,7 +9,7 @@ output:
         rmarkdown::html_vignette:
            default: false
            toc: true
-           toc_depth: 3
+           toc_depth: 4
            number_sections: true
            fig_caption: true
 #        bookdown::html_document2:
@@ -484,7 +484,7 @@ scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs,
 b0001b.Scree <- recordPlot() # Save the plot
 ```
 
-## Variables
+## The (qualitative) Variables
 
 ### Get some colors for the variables
 
@@ -492,7 +492,7 @@ b0001b.Scree <- recordPlot() # Save the plot
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 ```
-### Heatmap for the correlations between qualitative variables
+### Heatmap for correlations between variables
 
 The equivalent of a correlation matrix can be obtained in MCA
 by computing the $\phi^2$ correlation matrix associated to
@@ -505,7 +505,7 @@ corrMatBurt.list <- phi2Mat4BurtTable(cleanData)
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
 corr4MCA.r <- corrplot::corrplot(
-         as.matrix(corrMatBurt.list$phi2.mat^(1/2)), 
+         as.matrix(corrMatBurt.list$phi2.mat^(1/2)),# to get correlations 
          method="color", col=col(200),  
          type="upper", 
          addCoef.col = "black", # Add coefficient of correlation
@@ -742,7 +742,7 @@ print(a0009.Var.ctr23.imp)
 
 
 
-### Qualitative variables pseudo-*F*
+### Qualitative variables pseudo-*F* and pseudo-$BR$
 
 The contribution of a variable to a dimension measures
 the importance of this variable for the dimension but it does not
@@ -874,7 +874,7 @@ print(c0012.Var.br3)
 ```
 
 
-## Map for the levels of variables (i.e., columns)
+## Maps for the levels of variables (i.e., columns)
 
 ### Levels of variables: plain map, Dimensions 1 & 2
 
@@ -947,7 +947,7 @@ lines4J.imp <- addLines4MCA(Fj.imp,
 ```
 
 
-### Levels of variables: Map with important variables and lines for Dimensions 2 & 3
+### Levels of variables: Map for Dimensions 2 & 3
 
 Have a look at the map for Dimensions 2 and 3.
 
@@ -983,7 +983,7 @@ lines4J23.imp <- addLines4MCA(Fj23.imp,
  print( b0031.BaseMap.Fj23)
 ```
 
-### Levels of variables: Maps with important and supplementary variables
+### Levels of variables: Maps with supplementary variables
 
 To facilitate the interpretations of the map,
 we can add the supplementary variables to the variable map,
