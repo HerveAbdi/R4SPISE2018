@@ -4,7 +4,7 @@
 # for SPISE 2018 Workshop
 #
 #  cheeseSurvey4MCA Preambule ----
-#'@title An excel file for the data of
+#'@title An excel file storing the answers
 #' a survey questionnaire to be analyzed by MCA.
 #'
 #'@description \code{cheeseSurvey4MCA}:
@@ -18,7 +18,7 @@
 #'  with the packages \code{ExPosition} and \code{PTCA4CATA}
 #' (note that the package
 #' \code{PTCA4CATA} needs to have been installed
-#' from Github with the
+#' from \code{Github} with the
 #' command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 #'
 #'@details

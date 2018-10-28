@@ -2,7 +2,7 @@
 % Please edit documentation in R/cheeseSurvey4MCA.R, R/miniCheeseSurvey4MCA.R
 \name{cheeseSurvey4MCA}
 \alias{cheeseSurvey4MCA}
-\title{An excel file for the data of
+\title{An excel file storing the answers
 a survey questionnaire to be analyzed by MCA.}
 \description{
 \code{cheeseSurvey4MCA}:
@@ -16,7 +16,7 @@ a
  with the packages \code{ExPosition} and \code{PTCA4CATA}
 (note that the package
 \code{PTCA4CATA} needs to have been installed
-from Github with the
+from \code{Github} with the
 command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 
 \code{miniCheeseSurvey4MCA}:
@@ -42,7 +42,7 @@ provide additional information.
 The questionnaire is provided as
 \code{cheeseSurveyQuestionnaire}.
 
-The data are stored in an excel file containing 5  sheets.
+The data are stored in an excel file containing 5 sheets.
 The first sheet, called \code{Feuil1} contains the
  data for MCA: the rows are consumers and
 columns are variables.
@@ -50,7 +50,7 @@ The other sheets (called \code{Feuil2} to \code{Feuil5})
 provide additional information.
 The questionnaire is provided as
 \code{cheeseSurveyQuestionnaire}.
-The questions keept in the mini version concern
+The questions kept in the mini version concern
 \emph{Knowledge} (8 questions), \emph{Beliefs} (24 questions)
 along with descriptors of the participants: Age,
 Sex, CSP, size of the family.
@@ -91,8 +91,8 @@ These data were used in a dissertation on
  under the direction of Professor Sylvie Chollet.
 
 These data were used in a dissertation on
- Cheese consumption in France Menouar Nacef
- under the direction of Sylvie Chollet.
+ Cheese consumption in France written by Menouar Nacef
+ under the direction of Professor Sylvie Chollet.
 }
 \author{
 Nacef, M., & Chollet, S.

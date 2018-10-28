@@ -4,8 +4,8 @@
 # for SPISE 2018 Workshop
 #
 #  miniCheeseSurvey4MCA Preambule ----
-#'@title An excel file for the data of
-#' a subset of a
+#'@title An excel file storing the data of
+#' a subset of questions from a
 #' survey questionnaire to be analyzed by MCA.
 #'
 #'@description \code{miniCheeseSurvey4MCA}:
@@ -22,7 +22,7 @@
 #' command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 #'
 #'@details
-#'  The data are stored in an excel file containing 5  sheets.
+#'  The data are stored in an excel file containing 5 sheets.
 #' The first sheet, called \code{Feuil1} contains the
 #'  data for MCA: the rows are consumers and
 #' columns are variables.
@@ -30,15 +30,15 @@
 #' provide additional information.
 #' The questionnaire is provided as
 #' \code{cheeseSurveyQuestionnaire}.
-#' The questions keept in the mini version concern
+#' The questions kept in the mini version concern
 #' \emph{Knowledge} (8 questions), \emph{Beliefs} (24 questions)
 #' along with descriptors of the participants: Age,
 #' Sex, CSP, size of the family.
 #'
 #' @references
 #'  These data were used in a dissertation on
-#'  Cheese consumption in France Menouar Nacef
-#'  under the direction of Sylvie Chollet.
+#'  Cheese consumption in France written by Menouar Nacef
+#'  under the direction of Professor Sylvie Chollet.
 #' @keywords datasets DistatisR
 #' @author  Nacef, M., & Chollet, S.
 #' @name cheeseSurvey4MCA

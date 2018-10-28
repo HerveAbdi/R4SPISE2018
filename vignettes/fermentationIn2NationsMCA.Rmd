@@ -35,7 +35,7 @@ output:
 #           fig_caption: true
 #           df_print: kable
 vignette: >
-  %\VignetteIndexEntry{Multiple Correspondence Analysis: Analyzing a survey about fermented products (with supplementary observations)}
+  %\VignetteIndexEntry{Multiple Correspondence Analysis: Analyzing a survey about fermented products (with supplementary observations and variables)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}{inputenc}
 ---
@@ -54,12 +54,12 @@ knitr::opts_knit$get()
 # This code can be used to generate pdf or words
 rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
                    c('bookdown::pdf_document2','bookdown::html_document2') ) ,
-                   intermediates_dir = '../test4Spise2018/stuff4Ferment/')
+                   intermediates_dir = '../../test4Spise2018/stuff4Ferment/')
 rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
                    c('bookdown::pdf_document2','bookdown::html_document2'),
-                   output_dir = '../test4Spise2018/stuff4Ferment/')
+                   output_dir = '../../test4Spise2018/stuff4Ferment/')
 # Previous command cannot pass options such as keep_tex
-# to do so run only on format at a time such as:
+# to do so run only one format at a time such as:
 rmarkdown::render("fermentationIn2NationsMCA.Rmd",
                    bookdown::pdf_document2(keep_tex = TRUE, 
                    toc_depth = 3)  ,
@@ -71,10 +71,10 @@ rmarkdown::render("fermentationIn2NationsMCA.Rmd",
 # better
 # xaringan::inf_mr()
 # pretty format
-rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
+rmarkdown::render('../../test4Spise2018/fermentationMCA.Rmd',
                    prettydoc::html_pretty(keep_tex = "hpstr", 
                    toc_depth = 3) )
-rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
+rmarkdown::render('../../test4Spise2018/fermentationMCA.Rmd',
                    rmdformats::html_clean(keep_tex = TRUE 
                     ) )
 ```
@@ -130,11 +130,11 @@ and all their extensions:
 # Decomment all/some these lines if the packages are not installed
 #_____________________________________________________________________
 # # October 19, 2018. Temporary fix for an Rstudio problem
-# # if this error is generated 
+# # if this error message is generated: 
 # build_site()
 # Error in eval(substitute(expr), data, enclos = parent.frame()) :
 # is.character(repos) is not TRUE
-# # from Rstudio team: use these two lines
+# # from Rstudio team: as a temporary fix use these two lines
 # repos <- getOption("repos")
 # options(repos = setNames(as.character(repos), names(repos)))
 #_____________________________________________________________________
@@ -182,13 +182,14 @@ name4Graphs = 'fermentationFrom2Countries.pptx'
 ## Parameters for the analysis: data file name
 
 The data are stored in an excel file 
-called 'fermentedFoodSurvey.xlsx' that is stored with the package and
+called `fermentedFoodSurvey.xlsx` that is stored with the
+present package and
 whose path can be recovered as:
 ```{r filename, eval = TRUE}
 file2read.name     <- 'fermentedFoodSurvey.xlsx' # xls data file name
 path2file <- system.file("extdata", file2read.name, package = "R4SPISE2018")
 ```
-In the xls-file `r file2read.name`, the data are stored
+In the xls-file ``r file2read.name``, the data are stored
 in the sheet called `dataMCA` whose name is stored
 in the variable `sheetName4Data`:
 ```{r sheetName}
@@ -215,15 +216,16 @@ to your own analysis with minimal changes.
 ### The general analytic strategy
 
 We will first compute the results of the analysis, then create 
-the graphics, and finally save everything into a PowerPoint.
+the graphics, and finally save everything 
+into a PowerPoint presentation.
 
-# Run the statistical analysis
+# Run the statistical analyses
 
 ## Read the (active and supplementary) data
 
 The excel file name and location (i.e., path) are
 stored in the variable `path2file`. 
-To read the data we will use the function
+To read the data we use the function
 `DistatisR::read.df.excel()` (based upon
 the function `readxl::read_excel()`).
 ```{r resdSortingData}
@@ -272,7 +274,8 @@ The variables `quality` to `clear` were Likert scales
 These Likert scales were recoded as  `A` (agree) and
 `D` (disagree). 
 
-The following set of variables  corresponds to the demographics of the
+The following set of variables  corresponds 
+to the demographics of the
 participants:
 `Sex`, coded as `M` vs `W`;
 `Age`, coded as less then 25 (`<25`) and
@@ -294,7 +297,7 @@ we only kept
 questions that created differences
 between the respondents.
 
-### Supplementary Variables
+### Supplementary variables
 
 
 Here we decided to treat
@@ -304,7 +307,23 @@ Sex `(sex)`, Age `(age)`, `occupation` and
 their country of residence `(nation)`.
 
 
-## Selection and recoding
+### Supplementary observations
+
+The original data come from a survey 
+that was performed to explore the similarity and differences
+of two populations (i.e., Vietnam and France)
+about fermented products.
+The original participants of the study constitute the
+*active* observations.
+
+During the SPISE2018 workshop we also ask the participants to 
+fill in the same quesionnaire. 
+These new observations are not used
+to compute the MCA but are projected later on 
+as *supplementary* elements.
+
+
+## Selection of variables and recoding
 
 In MCA, the data need to be recoded as nominal variables
 with the constraint that the different levels of a given variable
@@ -336,8 +355,6 @@ temp.df <- dplyr::select(as.data.frame(rawData),
                          expensive, taste, trust, clear, innovation)
 ```
 
-Note that here, for a first pass, we keep all variables:
-
 
 ### Participants' description
 
@@ -356,15 +373,15 @@ temp.df[,'nation'] <- plyr::mapvalues(temp.df[,'nation'],
 
 ### New cleaned data set(s)
 
-We can now put together the new data set.
+We can now put together the new data sets.
 Note that in this example the supplementary observations
 were stored in the same excel sheet as the active data
 but the supplementary observations' names all start the letter `S`.
 The status of the observations (i.e., active vs. supplementary)
 is recorded in the variable `supVar` that we will use to subset
-the observations into the active set 
+the observations into the active set of observations
 (stored in the data frame `cleanData`) and
-the supplementary set 
+the supplementary set of observations 
 (stored in the data frame `cleanData.sup`).
 
 ```{r cleanData}
@@ -380,7 +397,7 @@ The different dataframes are now ready to be analyzed
 with multiple correspondence analysis:
 * `cleanData` contains the active observations and variables,
 * `cleanData.sup` contains the supplementary observations,
-* `cleanData.varSup` contains the supplemtary variables.
+* `cleanData.varSup` contains the supplementary variables.
 
 # Multiple Correspondence Analysis
 
@@ -398,9 +415,9 @@ But before using this function,
 we need to prepare the supplementary data.
 To do so, we need to
 transform the supplementary data from a data frame with
-variables being factors to a new data frame with 0/1 variables 
+variables being factors to a new data frame with 0/1 columns 
 (with as many
-0/1 variables as there are levels for this variable).
+0/1 columns as there are levels for this variable).
 For this transformation to be correctly done, it needs to be
 done on the merged data set (i.e., active + supplementary).
 All this is done with the code below
@@ -418,7 +435,7 @@ colnames(resMCA.sup$fii) <- paste0('Dimension ',
                                 1:ncol(resMCA.sup$fii))
 ```
 
-## Supplementary variables.
+## Supplementary variables
 
 ```{r runMCA.varsup}
 #
@@ -437,17 +454,45 @@ resMCA.inf <- epMCA.inference.battery(cleanData, graphs = FALSE)
 ```
 # Graphics
 
-Here we make the standard graphs for the active variables and observations, 
-and then for the supplementary observations
+Here we
+first plot the histogram of the eigenvalues (i.e., the "scree").
+then we
+make the standard graphs for the variables,
+for the levels of the active and supplementary variables,
+ for the active and supplementary  observations, 
+and then for the supplementary observations.
 
-## Get some colors for the variables
+
+## Screes for MCA
+
+
+### Plain Scree
+
+```{r screeMCA, fig.height=4, fig.width= 7, }
+scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
+                    title = "MCA. Explained Variance per Dimension")
+b0001a.Scree <- recordPlot() # Save the plot
+```
+
+### Scree with inference
+
+```{r screeMCA.inf, fig.height=4, fig.width= 7, }
+scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
+               p.ev = resMCA.inf$Inference.Data$components$p.vals, 
+               plotKaiser = TRUE,
+               title = "MCA. Explained Variance per Dimension")
+b0001b.Scree <- recordPlot() # Save the plot
+```
+
+## Variables
+
+### Get some colors for the variables
 
 ```{r colors}
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 ```
-## Heatmap for the correlations between qualitative variables
-
+### Heatmap for the correlations between qualitative variables
 
 The equivalent of a correlation matrix can be obtained in MCA
 by computing the $\phi^2$ correlation matrix associated to
@@ -475,7 +520,7 @@ a0000.corMat.phi <- recordPlot()
 ```
 
 
-## Variable contributions
+### Variable contributions
 
 The contributions for the variables can be obtained from the function
 `data4PCCAR::ctr4Variables` as:
@@ -484,9 +529,9 @@ varCtr <- data4PCCAR::ctr4Variables(cJ)
 rownames(color4Var) <- rownames(varCtr)
 ```
 
-
 The contribution of a variable is the sum of the contributions 
-of all its levels, this parameter 
+of all its levels. 
+This statistics 
 measures the importance of this variable
  for
 a given dimension. 
@@ -549,7 +594,7 @@ we can display the contributions with some bar plots.
 Note that these bar plots need some "tweaking" to correctly
 works.
 
-### Variable contributions Dimension 1.
+#### Variable contributions Dimension 1.
 
 ```{r ctrV1}
 varCtr1 <- varCtr[,1]
@@ -564,7 +609,7 @@ a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
 print(a0005.Var.ctr1)
 ```
 
-### Variable contributions Dimension 2.
+#### Variable contributions Dimension 2.
 
 
 
@@ -581,7 +626,7 @@ a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
 print(a0006.Var.ctr2)
 ```
 
-### Variable contributions Dimension 3.
+#### Variable contributions Dimension 3.
 
 
 
@@ -625,7 +670,7 @@ a0007.Var.ctr12  <- ctrV12$zeMap  + ctr.labels
 print(a0007.Var.ctr12)
 
 ```
-### Add a contribution plot with important variables only
+#### Variable contribution plot with important variables only
 
 ```{r getCtr12}
 absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
@@ -657,7 +702,7 @@ print(a0008.Var.ctr12.imp)
 ```
 
 
-#### A map with Dimension 2 & 3
+#### Variable contribution map with Dimensions 2 & 3
 
 
 ```{r getCtr23}
@@ -694,28 +739,144 @@ print(a0009.Var.ctr23.imp)
 
 ```
 
-## Scree for MCA
 
 
-### Plain Scree
 
-```{r screeMCA, fig.height=4, fig.width= 7, }
-scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
-                    title = "MCA. Explained Variance per Dimension")
-b0001a.Scree <- recordPlot() # Save the plot
+### Qualitative variables pseudo-*F*
+
+The contribution of a variable to a dimension measures
+the importance of this variable for the dimension but it does not
+evaluates its significance, stability, or replicability.
+In a standard PCA, this evaluation is performed with
+pseudo-$t$ values called bootstrap ratios obtained through resampling.
+In MCA, the standard inference procedures provide
+bootstrap ratios only for the levels of the variables and, 
+so these boootrap-ratios need to be combined to 
+create *pseudo-boostrap8 ratio for the qualitative varaibles.
+
+
+In a similar way to the variable contribution graphs 
+ we can plot these pseudo-bootstrap ratios.
+The graph of the bootstrap ratios and contributions
+often look similar but they provide different types of information.
+Contributions are descriptive statistics
+indicating the importance of a variable
+(akin to a 
+standard $R^2$) whereas (pseudo-) bootstrap ratios
+are inferential statistics
+(akin to a $t$-test)
+that combine importance and sample size.
+
+#### Computing pseudo-bootstrap ratios
+
+##### From BRs to an $F$
+If we assume
+that all levels of the variable are balanced,
+pseudo-$F$ ratios 
+for the $K$ qualitative variables
+can also be obtained from the bootstrap ratios 
+with the formula:
+ $$F_j = \frac{J_k}{J_k-1} \sum_{j}^{J_k} t_{k}^2$$ 
+where $J_k$ (respectively $t_k$) is the number of levels 
+(respectively bootstrap ratio)
+for the $k$-th qualitative variable.
+
+If we want to take into account the frequency of the different
+levels of a qualitative variable, and
+if we denote by $w_{j(k)}$ the frequency of level $j$ of the
+$k$-th variable, the pseudo-$F$ ratios can be computed as:
+$$F_k = \frac{1}{J_k-1} \sum_{j}^{J_k} w_{j(k)} t^2.$$
+
+These pseudo-$F$ ratios 
+evaluate if a dimension of the MCA creates  a reliable 
+difference between the levels of a qualitative variable;
+by contrast, a column bootstrap ratio evaluates 
+if this column systematically loads on the same side of
+a given dimension.
+
+
+##### From $F$ to $p(F)$ to pseudo-$BR$
+
+The pseudo pseudo-$F$ ratios can be re-scaled to pseudo-$BR$ in 
+two steps: First the pseudo-$F$ and its degrees
+of freedom are used to compute the $p$ value associated
+to the computed $F$ value which is then in turn
+used to compute the corresponding value of the $BR$ that
+would have generated this $p$-value.
+For example an $F$ of 3.13 computed for a variable
+with 4 levels (and so 3 degrees of freedom) 
+and 1,000 bootstraped iterations will have
+an associated $p$-value of .025 which will, in turn, correspond to
+a pseudo-BR of $1.96$.
+
+Note that a positive pseudo $BR$ corresponds to the standard
+$F$ ratio testing for differences between the levels
+of a qualitative variable, whereas a *negative*
+bootstrap is testing to *homogeneity* which would indicate
+that the levels of the variables are too similar than they
+should be under the null (an effect sometimes called
+a *strawberry basket* by statisticians, for more details, see, e.g., 
+Abdi, Edelman, Valentin, & Dowling, 2009).
+
+
+The computations of the pseudo-$BR$ for the qualitative variables
+is performed by the function `data4PCCAR::BR4varMCA`, 
+as illustrated below:
+```{r BR4var}
+# Get the pseudo Bootstrap Rqtios
+BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
+wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
+nIter    <- 1000
+Br4Variables <- data4PCCAR::BR4varMCA(BrLevels, wJ, nIter) 
 ```
 
-### Scree with inference
+##### Pseudo-BR Dimension 1
 
-```{r screeMCA.inf, fig.height=4, fig.width= 7, }
-scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
-               p.ev = resMCA.inf$Inference.Data$components$p.vals, 
-               plotKaiser = TRUE,
-               title = "MCA. Explained Variance per Dimension")
-b0001b.Scree <- recordPlot() # Save the plot
+
+```{r BR41}
+VarBR1 <- Br4Variables$pseudoBR.pos[,1]
+c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
+                               ylim = 2,
+                                threshold = 2,
+                                font.size = 5,
+                                color4bar = gplots::col2hex(color4Var)
+)
+print(c0010.Var.br1)
 ```
 
-## Variable Map
+##### Pseudo-BR Dimension 2
+
+```{r BR42}
+VarBR2 <- Br4Variables$pseudoBR.pos[,2]
+c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
+                               ylim = 2,
+                                threshold = 2,
+                                font.size = 5,
+                                color4bar = gplots::col2hex(color4Var)
+)
+print(c0011.Var.br2)
+```
+
+##### Pseudo-BR Dimension 3
+
+```{r BR43}
+VarBR3 <- Br4Variables$pseudoBR.pos[,3]
+c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
+                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
+                               ylim = 2,
+                               threshold = 2,
+                               font.size = 5,
+                               color4bar = gplots::col2hex(color4Var)
+)
+print(c0012.Var.br3)
+```
+
+
+## Map for the levels of variables (i.e., columns)
+
+### Levels of variables: plain map, Dimensions 1 & 2
 
 ```{r createFjMap}
 axis1 = 1
@@ -742,7 +903,7 @@ b0003.BaseMapNoDot.Fj  <- BaseMap.Fj$zeMap_background +
 print(b0002.BaseMap.Fj)
 ```
 
-### Variable Map with only important variables
+### Levels of variables: map with only important variables
 
 
 ```{r mapJ-grey}
@@ -761,7 +922,7 @@ print(b0010.BaseMap.Fj)
 ```
 
 
-### Map with important variables and lines
+### Levels of variables: map with important variables and lines
 
 The MCA map for the variables is easier to read when the 
 levels of the qualitative variables are linked to each other with
@@ -786,12 +947,43 @@ lines4J.imp <- addLines4MCA(Fj.imp,
 ```
 
 
-### Map with important variables and lines for Dimensions 2 & 3
+### Levels of variables: Map with important variables and lines for Dimensions 2 & 3
 
 Have a look at the map for Dimensions 2 and 3.
 
 
-### Maps with important and supplementary variables
+
+```{r mapJ23-grey}
+col4Levels23.imp <- data4PCCAR::coloringLevels(rownames(Fj),
+                                             col4ImportantVar23)
+axis3 = 3
+BaseMap.Fj23.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
+                              axis1 = axis3, axis2 = axis2,
+                              title = 'MCA. Important Variables. Dimensions 2 & 3', 
+                      col.points = col4Levels23.imp$color4Levels, 
+                              cex = 1,
+                      col.labels = col4Levels23.imp$color4Levels, 
+                              text.cex = 2.5,
+                              force = 2)
+labels4MCA23 <- createxyLabels.gen(x_axis = axis1, y_axis = axis2,
+               lambda = resMCA$ExPosition.Data$eigs,
+               tau = resMCA$ExPosition.Data$t)
+b0030.BaseMap.Fj23 <- BaseMap.Fj23.imp$zeMap + labels4MCA23 
+
+# zeNames          <- getVarNames(rownames(Fj)) 
+importantsLabels23 <- zeNames$stripedNames %in% zeNames$variableNames[importantVar23]
+Fj23.imp <- Fj[importantsLabels23,]
+lines4J23.imp <- addLines4MCA(Fj23.imp, 
+                    col4Var = col4Levels$color4Variables[
+                               which(importantVar23)],
+                    axis_h = axis3,
+                    axis_v = axis2,
+                    size = .9, linetype = 3, alpha = .5)
+ b0031.BaseMap.Fj23 <-  b0030.BaseMap.Fj23 + lines4J23.imp
+ print( b0031.BaseMap.Fj23)
+```
+
+### Levels of variables: Maps with important and supplementary variables
 
 To facilitate the interpretations of the map,
 we can add the supplementary variables to the variable map,
@@ -833,7 +1025,8 @@ print(b0031.Sup.Fj.only)
 
 
 The plots of the supplementary variables suggest that
-Dimension 1 expresses a difference between young, (often food professionals), 
+Dimension 1 expresses a difference between young, 
+(often food professionals), 
 Vietnamese respondents versus older, (mostly non food professional), 
 French respondents 
 (a pattern indicating a potential confound of the `age` and
@@ -843,7 +1036,10 @@ and French respondents by coloring,
 in their maps, the respondents according to their nationality.
  
 
-### Bootstrap ratios
+### Bootstrap ratios for Levels of Variables
+
+
+
 
 Just like in PCA, the significance of
 each column (i.e., level of a qualitative variable) can be assessed
@@ -863,96 +1059,8 @@ print(c0001.Levels.BR)
 ```
 
 
-### Qualitative variables pseudo-*F*
 
-If we assume
-that all levels of the variable are balanced,
-pseudo-$F$ ratios 
-for the $K$ qualitative variables
-can also be obtained from the bootstrap ratios 
-with the formula:
- $$F_j = \frac{J_k}{J_k-1} \sum_{j}^{J_k} t_{k}^2$$ 
-where $J_k$ (respectively $t_k$) is the number of levels 
-(respectively bootstrap ratio)
-for the $k$-th qualitative variable.
-
-If we want to take into account the frequency of the different
-levels of a qualitative variable, and
-if we denote by $w_{j(k)}$ the frequency of level $j$ of the
-$k$-th variable, the pseudo-$F$ ratios can be computed as:
-$$F_k = \frac{1}{J_k-1} \sum_{j}^{J_k} w_{j(k)} t^2.$$
-
-These pseudo-$F$ ratios 
-evaluates if a dimension of the MCA creates  a reliable 
-difference between the levels of a qualitative variable;
-by contrast, a column bootstrap ratio evaluates 
-if this column systematically loads on the same side of
-a given dimension.
-
-```{r BR4var}
-# Get the pseudo Bootstrap Rqtios
-BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
-wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
-nIter    <- 1000
-Br4Variables <- data4PCCAR::BR4varMCA(BrLevels, wJ, nIter) 
-```
-
-#### Pseudo-BR Dimension 1
-
-
-```{r BR41}
-VarBR1 <- Br4Variables$pseudoBR.pos[,1]
-c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
-                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
-                               ylim = 2,
-                                threshold = 2,
-                                font.size = 5,
-                                color4bar = gplots::col2hex(color4Var)
-)
-print(c0010.Var.br1)
-```
-
-#### Pseudo-BR Dimension 2
-
-
-```{r BR42}
-VarBR2 <- Br4Variables$pseudoBR.pos[,2]
-c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
-                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
-                               ylim = 2,
-                                threshold = 2,
-                                font.size = 5,
-                                color4bar = gplots::col2hex(color4Var)
-)
-print(c0011.Var.br2)
-```
-
-#### Pseudo-BR Dimension 3
-
-
-```{r BR43}
-VarBR3 <- Br4Variables$pseudoBR.pos[,3]
-c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
-                    main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
-                               ylim = 2,
-                               threshold = 2,
-                               font.size = 5,
-                               color4bar = gplots::col2hex(color4Var)
-)
-print(c0012.Var.br3)
-```
-
-### Pseudo-Bootstrapped Map for Levels of Variables
-
-In a similar way to the graphs of the Levels of the qualitative
-variables based on contributions we can also plot 
- graphs of the Levels of the qualitative
-variables based on the bootstrap ratios,
-These will look very similar, with the exception of the variable 
-`occupation`, which has an important contribution but a 
-non-significant pseudo bootstrap ratio.
-
-## Map for the observations
+## Maps for the observations
 
 Here we  color the observations by `nation,` 
 to better understand how this variable 
@@ -988,10 +1096,10 @@ d0001.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
 print(d0001.BaseMapNoLabels.Fi)
 ```
 
-## Add Group Means, Confidence, and Tolerance Intervals
+### Group Means, Confidence, and Tolerance Intervals
 
 
-### Group Means
+#### Group Means
 
 ```{r Boot4CI}
 # Bootstrap for CI:
@@ -1013,7 +1121,7 @@ d002.Map.I.withMeans <- d0001.BaseMapNoLabels.Fi  +
 print(d002.Map.I.withMeans)
 ```
 
-### With bootstrapped confidence intervals 
+#### With bootstrapped confidence intervals 
 
 ```{r graphElli}
 GraphElli <- PTCA4CATA::MakeCIEllipses(BootCube.Gr$BootCube[,1:2,],
@@ -1025,7 +1133,7 @@ d003.Map.I.withCI <-  d0001.BaseMapNoLabels.Fi +
 print(d003.Map.I.withCI)
 ```
 
-### With Tolerance convex hulls
+#### With tolerance convex hulls
 
 ```{r TI}
 GraphTI.Hull <- PTCA4CATA::MakeToleranceIntervals(resMCA$ExPosition.Data$fi,
@@ -1049,7 +1157,7 @@ d005.Map.I.withTIHull <- d002.Map.I.withMeans  +
 print(d005.Map.I.withTIHull)
 ```
 
-## Projecting a subsample
+#### Projecting a subsample (of supplementary observations)
 
 Here we project in the observation sapce the data
 obtained from the 30 participants of the `SPISE2018`

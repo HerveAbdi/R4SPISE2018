@@ -2,7 +2,7 @@
 % Please edit documentation in R/beersNovicesExpertsCATA.R
 \name{beersNovicesExpertsCATA}
 \alias{beersNovicesExpertsCATA}
-\title{An excel file for the data of
+\title{An excel file storing the data from
 a CATA task: Novices and Experts describe 9 beers.}
 \description{
 \code{beersNovicesExpertsCATA}.
@@ -12,11 +12,12 @@ storing the data from a CATA task:
 described by 57 descriptors
 that belong
 to one of three blocks (Gustative, Emotion, or Context).
-This excel file can be accessed with the R-command
+This excel file can be accessed with the \code{R}-command
 \code{system.file()}, and can be
 read by the function
 \code{PTCA4CATA::read.xls.CATA} (note that the package
-\code{PTCA4CATA} needs to have been installed first with the
+\code{PTCA4CATA} needs to have been installed first
+from \code{Github} with the
 command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 }
 \details{
@@ -29,12 +30,12 @@ coded as indicated in the help for \code{PTCA4CATA::read.xls.CATA}
 and for  \code{PTCA4CATA::OrangeJuiceSortingRawData}.
  ..
 The second sheet, called \code{DescriptionJudges} contains the
-description of the Assessors, the explanation of the description
+description of the Assessors; The explanation of the description
 is given in the  third sheet called
 \code{Legend4DescriptionJudges}.
 The fourth sheet, called \code{Categories4Descriptors}
-gives the category (C/E/G) of the descriptor,
-the explanation of the description
+gives the category (C/E/G) of the descriptors;
+The explanation of the description
 is given in the fifth sheet called
 \code{Legend4Categories} (C = Context,
 E = Emotion, G = Gustative).

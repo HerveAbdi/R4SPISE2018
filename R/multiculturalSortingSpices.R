@@ -5,7 +5,7 @@
 #
 #  multiculturalSortingSpices Preambule ----
 #' @title An excel file:
-#' 61 assessors from 5 countries sort 16 spice samples
+#' 61 assessors from 5 countries sorted 16 spice samples
 #'
 #' @description
 #'\code{multiculturalSortingSpices}. An excel file
@@ -14,11 +14,13 @@
 #' (USA, France, India, Spain, and Vietnam)
 #' sorted 16 different spices
 #' (including 6 mixtures of spices).
-#' This excel file can be accessed with the R-command
+#' This excel file can be accessed with the \code{R}-command
 #' \code{system.file()}, and can be
 #' read by the function
 #' \code{DistatisR::read.df.excel} (note that the package
-#' \code{DistatisR} needs to have been installed first).
+#' \code{DistatisR} needs to have been installed first
+#' from \code{Github} as 
+#' \code{devtools::install_github('HerveAbdi/DistatisR')}).
 #'
 #'@details
 #'  The data are stored in an excel file containing 3 sheets.
