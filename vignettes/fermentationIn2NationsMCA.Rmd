@@ -61,9 +61,9 @@ rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
 # Previous command cannot pass options such as keep_tex
 # to do so run only one format at a time such as:
 rmarkdown::render("fermentationIn2NationsMCA.Rmd",
-                   bookdown::pdf_document2(keep_tex = TRUE, 
-                   toc_depth = 3)  ,
-                   output_dir = '../../test4Spise2018/stuff4Ferment/')
+         bookdown::pdf_document2(keep_tex = TRUE, 
+         toc_depth = 3)  ,
+         output_dir = '../../test4Spise2018/stuff4Ferment/')
 # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd','tufte::tufte_html')
 # Not tufte works only with 2 levels of section
 # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',tufte::tufte_handout(toc_depth = 2))
@@ -80,7 +80,6 @@ rmarkdown::render('../../test4Spise2018/fermentationMCA.Rmd',
 ```
 
 # Prelude
-
 If you want to make sure that you have a clean start,
 you can execute the following commands:
 ```{r , include = TRUE, echo = TRUE}
@@ -153,7 +152,7 @@ and all their extensions:
 #  install.packages('printr')
 #  install.packages('kableExtra')
 #  load the libraries that we will need
-suppressMessages(library(Matrix))
+# suppressMessages(library(Matrix))
 suppressMessages(library(prettyGraphs))
 suppressMessages(library(ExPosition))
 suppressMessages(library(InPosition))
@@ -674,10 +673,9 @@ print(a0007.Var.ctr12)
 #### Variable contribution plot with important variables only
 
 ```{r getCtr12}
-absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
-varCtr12  <- (absCtrVar[,1] + absCtrVar[,2]) / 
-   (resMCA$ExPosition.Data$eigs[1] + resMCA$ExPosition.Data$eigs[2])
-importantVar <- (varCtr12 >=  1 / length(varCtr12))
+var12 <- data4PCCAR::getImportantCtr(ctr = varCtr, 
+                           eig = resMCA$ExPosition.Data$eigs)
+importantVar <- var12$importantCtr.1or2
 col4ImportantVar <- color4Var
 col4NS <- 'gray90' 
 col4ImportantVar[!importantVar] <- col4NS
@@ -707,10 +705,11 @@ print(a0008.Var.ctr12.imp)
 
 
 ```{r getCtr23}
-#absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
-varCtr23  <- (absCtrVar[,3] + absCtrVar[,2]) / 
-   (resMCA$ExPosition.Data$eigs[3] + resMCA$ExPosition.Data$eigs[2])
-importantVar23 <- (varCtr23 >=  1 / length(varCtr23))
+#
+var32 <-  data4PCCAR::getImportantCtr(ctr = varCtr, 
+                                    eig = resMCA$ExPosition.Data$eigs,
+                                    axis1 = 3, axis2 = 2)
+importantVar23 <- var32$importantCtr.1or2
 col4ImportantVar23 <- color4Var
 col4NS <- 'gray90' 
 col4ImportantVar23[!importantVar23] <- col4NS
@@ -777,7 +776,7 @@ pseudo-$F$ ratios
 for the $K$ qualitative variables
 can also be obtained from the bootstrap ratios 
 with the formula:
- $$F_j = \frac{J_k}{J_k-1} \sum_{j}^{J_k} t_{k}^2$$ 
+ $$F_k = \frac{J_k}{J_k-1} \sum_{j}^{J_k} t_{k}^2$$ 
 where $J_k$ (respectively $t_k$) is the number of levels 
 (respectively bootstrap ratios)
 for the $k$-th qualitative variable.
@@ -786,10 +785,10 @@ If we want to take into account the frequency of the different
 levels of a qualitative variable, and
 if we denote by $w_{j(k)}$ the frequency of level $j$ of the
 $k$-th variable, the pseudo-$F$ ratios can be computed as:
-$$F_k = \frac{1}{J_k-1} \sum_{j}^{J_k} w_{j(k)} t^2.$$
+$$F_k = \frac{J_k}{J_k-1} \sum_{j}^{J_k} w_{j(k)} t^2.$$
 
 These pseudo-$F$ ratios 
-evaluate if a dimension of the MCA creates  a reliable 
+evaluate if a dimension of the MCA creates a reliable 
 difference between the levels of a qualitative variable;
 by contrast, a column bootstrap ratio evaluates 
 if this column systematically loads on the same side of
@@ -798,13 +797,18 @@ a given dimension.
 
 ##### From $F$ to $p(F)$ to pseudo-$BR$
 
-The pseudo pseudo-$F$ ratios can be re-scaled to pseudo-$BR$ in 
+To display the pseudo-$F$ ratios in a similar
+way (i.e., with the same `R`-functions) as the bootstrap ratios,
+it is convenient to transform the pseudo-$F$ 
+into pseudo bootstrap ratios.
+To do so,
+the pseudo-$F$ ratios are re-scaled to pseudo-$BR$ in 
 two steps: First the pseudo-$F$ and its degrees
 of freedom are used to compute the $p$ value associated
-to the computed $F$ value which is then in turn
+to the computed $F$ value and this probability is then, in turn,
 used to compute the corresponding value of the $BR$ that
-would have generated this $p$-value.
-For example an $F$ of 3.13 computed for a variable
+would have generated the $p$-value.
+For example, an $F$ of 3.13 computed for a variable
 with 4 levels (and so 3 degrees of freedom) 
 and 1,000 bootstrapped iterations will have
 an associated $p$-value of .025 which will, in turn, correspond to
@@ -813,18 +817,17 @@ a pseudo-BR of $1.96$.
 Note that a positive pseudo $BR$ corresponds to the standard
 $F$ ratio testing for differences between the levels
 of a qualitative variable, whereas a *negative*
-bootstrap is testing to *homogeneity* which would indicate
+$BR$ is testing for the *homogeneity* which would indicate
 that the levels of the variables are too similar than they
 should be under the null (an effect sometimes called
 a *strawberry basket* by statisticians, for more details, see, e.g., 
 Abdi, Edelman, Valentin, & Dowling, 2009).
 
-
 The computations of the pseudo-$BR$ for the qualitative variables
-is performed by the function `data4PCCAR::BR4varMCA`, 
+are performed by the function `data4PCCAR::BR4varMCA`, 
 as illustrated below:
 ```{r BR4var}
-# Get the pseudo Bootstrap Rqtios
+# Get the pseudo Bootstrap Ratios
 BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
 wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
 nIter    <- 1000
@@ -832,7 +835,6 @@ Br4Variables <- data4PCCAR::BR4varMCA(BrLevels, wJ, nIter)
 ```
 
 ##### Pseudo-BR Dimension 1
-
 
 ```{r BR41}
 VarBR1 <- Br4Variables$pseudoBR.pos[,1]
@@ -942,7 +944,7 @@ Fj.imp <- Fj[importantsLabels,]
 lines4J.imp <- addLines4MCA(Fj.imp, 
                             col4Var = col4Levels$color4Variables[which(importantVar)], 
                             size = .9, linetype = 3, alpha = .5)
- b0021.BaseMap.Fj <-  b0020.BaseMap.Fj + lines4J.imp
+ b0021.BaseMap.Fj <-  b0010.BaseMap.Fj + lines4J.imp
  print( b0021.BaseMap.Fj)
 ```
 
@@ -965,7 +967,7 @@ BaseMap.Fj23.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
                       col.labels = col4Levels23.imp$color4Levels, 
                               text.cex = 2.5,
                               force = 2)
-labels4MCA23 <- createxyLabels.gen(x_axis = axis1, y_axis = axis2,
+labels4MCA23 <- createxyLabels.gen(x_axis = axis3, y_axis = axis2,
                lambda = resMCA$ExPosition.Data$eigs,
                tau = resMCA$ExPosition.Data$t)
 b0030.BaseMap.Fj23 <- BaseMap.Fj23.imp$zeMap + labels4MCA23 
@@ -1193,7 +1195,7 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
 ```
 
 Not surprisingly, the participants of the SPISE2018 meeting
-are projected close to the Vietnamese participants.
+are projected closer to the Vietnamese participants than to the French participants.
 
 # Save the graphics as a PowerPoint
 
