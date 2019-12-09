@@ -65,7 +65,7 @@ preamble below).
 
 ## Rproject is best 
 Make sure that you start this analysis as a new `Rproject` so that
-the default directory will be correctly set and the memori has been cleared.
+the default directory will be correctly set and the memory has been cleared.
 
 ## (Install the packages if not already done, and then) Load the libraries 
 Before we start the analysis,

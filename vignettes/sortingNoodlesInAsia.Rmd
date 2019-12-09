@@ -37,6 +37,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r pdfIt, echo = FALSE, warning = FALSE, eval = FALSE}
+# To get the vignette as a pdf file
+rmarkdown::render("sortingNoodlesInAsia.Rmd",
+         bookdown::pdf_document2(keep_tex = TRUE, 
+         toc_depth = 3)  ,
+         output_dir = '../../test4Spise2018/sortingNoodles/')
+```
+
 
 
 ```{r, eval = FALSE,ECHO = FALSE , include = FALSE}
@@ -77,11 +85,12 @@ knitr::include_graphics('../man/figures/ramenNoodlesImages.png')
 
 If you want to make sure that you have a clean start,
 you can execute the following commands:
-```{r , include = FALSE}
+
+```{r , include = TRUE, echo = TRUE}
 rm(list = ls())
 graphics.off()
 ```
-Or, better, you can should? must?) 
+Or, better, you can (should? must?) 
 use an `Rproject` for this project (see
 preamble below).
 
@@ -101,7 +110,7 @@ we need to have our three standard packages installed
 and the corresponding libraries loaded:
 
 * `DistatisR`
-* `PTCA4CTA`
+* `PTCA4CATA`
 * `R4SPISE2018`
 
 We also need some other packages namely:
@@ -109,7 +118,7 @@ We also need some other packages namely:
 
 * `Matrix`
 * `factoextra`
-* `Exposition`
+* `ExPosition`
 
 All these packages are installed or loaded with the
 following instructions:
@@ -122,6 +131,7 @@ following instructions:
 #  install.packages('Matrix')
 #  install.packages('factoextra')
 #  install.packages('ExPosition')
+#  install.packages('pander') # nice pdf-tables
 #
 #  load the libraries that we will need
 suppressMessages(library(Matrix))
@@ -130,6 +140,7 @@ suppressMessages(library(DistatisR))
 suppressMessages(library(PTCA4CATA))
 suppressMessages(library(prettyGraphs))
 suppressMessages(library(ExPosition))
+
 
 
 ```
@@ -173,8 +184,8 @@ knitr::include_graphics('../man/figures/imageOfSortingNoodles.png')
 
 if you open this excel file, it will look like the
 Figure above. 
-The sorting data are stored in the sheet `r sheetName4Data`
-(whose name is stored dans la variable `sheetName4Data`).
+The sorting data are stored in the `sheet` called `r sheetName4Data`
+(whose name is stored in the variable `sheetName4Data`).
 In this sheet,
 the first column gives the names of the products 
 (here spices) and the following columns give how
@@ -185,11 +196,11 @@ were sorted together are assigned the same number
 The contingency table storing the number of Judges 
 using a descriptor (column) for a product (row),
 is stored in the sheet `r sheetName4Vocabulary`
-(whose name is stored dans la variable `sheetName4Vocabulary`).
+(whose name is stored in the variable `sheetName4Vocabulary`).
 
 The description of the Judges (e.g., country, age, gender)
 is stored in the sheet `r sheetName4Judges`
-(whose name is stored dans la variable `sheetName4Judges`).
+(whose name is stored in the variable `sheetName4Judges`).
 
 When you record you own data,
 make sure that you follow the same format, this way the script
@@ -197,7 +208,7 @@ described in this vignette will apply
 to your own analysis with minimal change.
 
 We will first compute the results of the analysis, then create 
-the graphics, and finally save everything into a powerpoint.
+the graphics, and finally save everything into a PowerPoint.
 
 
 # Run the statistical analysis
@@ -206,11 +217,12 @@ the graphics, and finally save everything into a powerpoint.
 
 The excel file name and location (i.e., path) are
 stored in the variable `path2file`. 
-To read the sorted data and the vocabulary  
+To read the sorted data and the vocabulary 
 contingency table we will use the function
 `DistatisR::read.df.excel()` (based upon
 the function `readxl::read_excel()`).
-We will use again this functon to read the deription of the judges.
+We will use again this function to read the description 
+of the judges.
 ```{r resdSortingData}
 # read the sortinig data and the vocabulary
 multiSort.list <- read.df.excel(path = path2file, 
@@ -223,11 +235,11 @@ The sorting data and the vocabulary
 are now stored into the list `multiSort.list` 
 in which the sorting data are stored in the 
 `dataframe` called `multiSort.list$df.data`
-and the vocabulary contingency table is stored 
+and in which the vocabulary contingency table is stored 
 in the 
 dataframe called `multiSort.list$df.voc`.
 To facilitate coding, we put the sorting data and the vocabulary
-in the data frames called (respectivelly) `multisSort` and
+in the data frames called (respectively) `multisSort` and
 `vocabulary`.
 
 ```{r savexls, echo = FALSE, eval = FALSE, include = FALSE}
@@ -242,8 +254,9 @@ peek at the dataframe `multiSort` and look at the data for
 the first 5 spices of 
 the first 10 assessors:.
 ```{r peekASort}
-# de-comment to run
-knitr::kable(multiSort[1:5,1:10])
+library(pander)
+# knitr::kable(multiSort[1:5,1:10])
+pander::pander(multiSort[1:5,1:10])
 ```
 
 
@@ -252,7 +265,7 @@ knitr::kable(multiSort[1:5,1:10])
 
 The description of the judges can be found in the 
 sheet ``r sheetName4Judges` and it is read
-with the function `DistatisR::read.df.excel()` as:
+with the function `DistatisR::read.df.excel` as:
 ```{r readJudges}
 # read the sortinig data and the vocabulary
 judgesDescription <- read.df.excel(path = path2file, 
@@ -274,7 +287,7 @@ nVarJudges  <- ncol(judgesDescription)
 k <- 1 # this is the first descriptor for the judges
 ```
 
-Here we analyze judges's descriptor number `r k` 
+Here we analyze the judges' descriptor number `r k` 
 (`r colnames(judgesDescription)[k]`).
 In order to run an analysis for another descriptor,
 we just need to change the value of `k` and re-run the analysis.
@@ -304,23 +317,26 @@ color4Judges.list <- prettyGraphs::createColorVectorsByDesign(nominal.Judges)
 The first step of the analysis is to transform the sorting data
 into a brick of distance matrices. 
 This is done with the function
-`DistanceFromSort()`'
+`DistanceFromSort()` as:
 ```{r getCube}
 DistanceCube <- DistanceFromSort(multiSort)
 ```
+The previous line of code, created the brick of distance (from
+the raw data) and stored it in the data frame `DistanceCube`.
 
 ## Run plain DISTATIS
 
-The brick of distance matrices (`multiSort`) is used
+The brick of distance matrices 
+(i.e., the data frame `DistanceCube`) is used
 as the argument of the function `distatis` that will compute
-the plain DISTATIS for the sorting task.
+the plain DISTATIS method for the sorting task.
 
 
 ```{r runDistatis}
 resDistatis <- distatis(DistanceCube)
 ```
-The list `resDistatis` contains the results of the analysis,
-this list contains two lists: 
+The list `resDistatis` contains the results of the analysis.
+This list contains two lists: 
 The first list is
 called `resDistatis$res4Cmat`, it contains
 the results for the $R_V$ analysis
@@ -330,8 +346,8 @@ it contains the results for the analysis of the
 compromise (called the **S** matrix) .
 If you have forgotten the output format of `distatis`,
 or want to have more information: have a look
-at the help for the function`distatis()`:  
-in the console type
+at the help for the function`distatis`:
+In the console type:
 `?distatis`, or print `resDistatis`.
 
 
@@ -414,7 +430,7 @@ F4Voc <- projectVoc(multiSort.list$df.voc, resDistatis$res4Splus$F)
 
 Most of the graphics will be created with either
 `prettyGraphs` or with `PTCA4CATA`,
-The graphs will be saved in a powerpoint file.
+The graphs will be saved in a PowerPoint file.
 
 ## The RV analysis
 
@@ -425,7 +441,7 @@ the $R_V$ analysis describes the Judges' similarity structure.
 
 ### Scree plot for RV
 
-In the first map shows the scrr plot of the eigenvalues of
+In the first map shows the scree plot of the eigenvalues of
 the $R_V$ between-Judges matrix.
 
 ```{r RV.scree.MapPlain, fig.height=4, fig.width= 7, }
@@ -499,7 +515,7 @@ a2d.gg.RVMap.CI <- a2b.gg.RVmap + gg.rv.means$zeMap_dots + GraphElli.rv
 ```
 
 
-The values of teh means of the assessors from the `r k` groups of Judges 
+The values of the means of the assessors from the `r k` groups of Judges 
  can be seen in the table of means for the first three dimensions
 
 ```{r meansRV}
@@ -518,6 +534,7 @@ print(a2d.gg.RVMap.CI )
 
 ## Post-Hoc Analysis: Exploring the individual participants between participants
 
+### Cluster Analysis
 Here we conduct a hierarchical cluster analysis on the factor scores
 of the $R_V$ matrix.
 
@@ -543,6 +560,33 @@ The cluster analysis suggests
 that there are groups of participants, but how many groups
 maybe more difficult to evaluate.
 
+### K-means 
+
+We try $k$-means with 4 centers
+
+```{r kmeans}
+# First plain k-means
+set.seed(42)
+participants.kMeans <- kmeans(x = G , centers = 4)
+#_____________________________________________________________________
+# Now to get a map by cluster:
+col4Clusters  <- createColorVectorsByDesign(
+              makeNominalData(
+              as.data.frame(participants.kMeans$cluster)  ))
+```
+
+
+```{r kmeans.graph, fig.height=6, fig.width= 9}
+baseMap.i.km <- PTCA4CATA::createFactorMap(G,
+                             title = "RV map. k-means 4 groups",        
+                                  col.points = col4Clusters$oc,
+                                  col.labels = col4Clusters$oc,
+                 constraints =    gg.rv.graph.out$constraints,
+                                  alpha.points =  .4)
+a06.aggMap.i.km <- baseMap.i.km$zeMap_background +
+  baseMap.i.km$zeMap_dots + baseMap.i.km$zeMap_text +  labels4RV
+print(a06.aggMap.i.km)
+```
 
 ## The compromise
 
@@ -696,20 +740,20 @@ print(b5.gg.voc.bary.dots.gr)
 
 
 
-# Save the graphics as a powerpoint
+# Save the graphics as a PowerPoint
 
-The graphics are saved as a powerpoint with the following command
+The graphics are saved as a PowerPoint with the following command
 `r name4Graphs = 'SortingRamenNoodles.pptx'`
 
 ```{r saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE}
 toto <- PTCA4CATA::saveGraph2pptx(file2Save.pptx = name4Graphs, 
-                 title = '30 (mostly Asian) participants sort pictures of 20 Ramens', 
+                 title = '30 (mostly Asian) participants sort pictures of 20 Ramen noodles', 
                  addGraphNames = TRUE)
 ```
 
 
 
-Note that we could also have created a powerpoint with
+Note that we could also have created a PowerPoint with
 `Rmarkdown` by using the following options in the 
 preamble:
 

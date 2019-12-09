@@ -24,7 +24,7 @@
 #'
 #'@description
 #' The R4SPISE2018 package is
-#' a compagnion of the SPISE2018
+#' a companion of the SPISE2018
 #' Advanced Workshop on Sensory Evaluation
 #' (07/23/2018 to 07/26/2018, for details see:
 #'   \url{http://sensorylab.hcmut.edu.vn/spise2018/}).

@@ -552,7 +552,6 @@ TableWithTitle <- gTree(children = gList(ctrTable, title))
 ```
 
 
-
 ```{r , fig.height= 10, fig.width= 6, fig.cap = 'Variable Contributions (per mille). \\label{fig:varCtr}', collapse = TRUE, fig.margin = TRUE}
 # Note: Potential problems with grid.draw(). If it does not plot
 # recordPlot() will fail and the graph will not be saved in the powerpoint
@@ -560,8 +559,6 @@ TableWithTitle <- gTree(children = gList(ctrTable, title))
 grid.draw(TableWithTitle)
 #a0000.2.ctrTable  <- recordPlot()
 ```
-
-
 
 
 ```{r printr,  echo = FALSE, message = FALSE }
@@ -576,8 +573,6 @@ laTable <- round(varCtr[,1:nFact]*1000)
 ```
 
 
-
-
 To create graphics we will 
 color the different levels of a variable with the same color.
 First we create the vector storing the color with the function
@@ -587,7 +582,6 @@ col4Levels <- data4PCCAR::coloringLevels(
                        rownames(resMCA$ExPosition.Data$fj), color4Var)
 col4Labels <- col4Levels$color4Levels
 ```
-
 
 As an alternative to the table of contributions,
 we can display the contributions with some bar plots.
@@ -610,8 +604,6 @@ print(a0005.Var.ctr1)
 ```
 
 #### Variable contributions Dimension 2.
-
-
 
 ```{r ctrV2}
 varCtr2 <- varCtr[,2]
@@ -817,7 +809,8 @@ a pseudo-BR of $1.96$.
 Note that a positive pseudo $BR$ corresponds to the standard
 $F$ ratio testing for differences between the levels
 of a qualitative variable, whereas a *negative*
-$BR$ is testing for the *homogeneity* which would indicate
+$BR$ is testing for the *homogeneity*,
+an effect which would indicate
 that the levels of the variables are too similar than they
 should be under the null (an effect sometimes called
 a *strawberry basket* by statisticians, for more details, see, e.g., 
@@ -953,8 +946,6 @@ lines4J.imp <- addLines4MCA(Fj.imp,
 
 Have a look at the map for Dimensions 2 and 3.
 
-
-
 ```{r mapJ23-grey}
 col4Levels23.imp <- data4PCCAR::coloringLevels(rownames(Fj),
                                              col4ImportantVar23)
@@ -1038,7 +1029,7 @@ and French respondents by coloring,
 in their maps, the respondents according to their nationality.
  
 
-### Bootstrap ratios for Levels of Variables
+### Bootstrap ratios for levels of variables
 
 
 
@@ -1098,10 +1089,10 @@ d0001.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
 print(d0001.BaseMapNoLabels.Fi)
 ```
 
-### Group Means, Confidence, and Tolerance Intervals
+### Group means, confidence and tolerance intervals
 
 
-#### Group Means
+#### Group means
 
 ```{r Boot4CI}
 # Bootstrap for CI:
@@ -1197,7 +1188,7 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
 Not surprisingly, the participants of the SPISE2018 meeting
 are projected closer to the Vietnamese participants than to the French participants.
 
-# Save the graphics as a PowerPoint
+# Save the graphics as a PowerPoint presentation
 
 The graphics are saved as a PowerPoint presentation called
 ``r name4Graphs``

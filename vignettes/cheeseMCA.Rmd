@@ -122,7 +122,7 @@ Now the variable `path2file` contains the name (and location)
 of the excel data file.
 If you open this excel file, it will look like the
 figure above. 
-The sorting data are stored in the sheet labelled `Data.`
+The sorting data are stored in the sheet labeled `Data.`
 The first column gives the ID of the respondents 
 and each column represents a question asked to the respondents.
 At the intersection of a row and a column we have the 

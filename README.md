@@ -45,11 +45,13 @@ So, be patient!
 
 ## How to install the package with devtools >  2.0
 
-IMPORTANT: From version 2.0 onwards, devtools has changed its options and now
+IMPORTANT: From version 2.0  to 2.1, devtools has changed its options and now
 the parameter `build_vignettes` is (silently) ignored. This option is now integrated
 in the parameter `build_opts` which passes options for `CMD build`  and which, by default
 include the following options `build_opts = c("--no-resave-data", "--no-manual",
-"--no-build-vignettes")`. So
+"--no-build-vignettes")`.  However, versions of devtools > 2.2 seems to have
+resinstated the  `build_vignettes` option.
+So
 with `devtools` version 2.0 or more recent,
 the option `build_opts = c("--no-resave-data", "--no-manual",
 "--no-build-vignettes")`
@@ -57,10 +59,11 @@ needs to be eliminated in the new call to `devtools` and replaced
 by the new option `build_opts` as:
 ```{r}
 # install.packages('devtools') 
-# decomment this line  if devtools is not yet installed
-devtools::install_github('HerveAbdi/R4SPISE2018', 
+# decomment the line above if devtools is not yet installed 
+install_github("HerveAbdi/R4SPISE2018",
 dependencies = TRUE, # use it first time only, comment after
-build_opts = c("--no-resave-data") ) # to get the vignettes       
+build_opts = c("--no-resave-data", "--no-manual"), # Explicitely get the option
+build_vignettes = TRUE) # to get the vignettes  
 ```
 
 The installation of the "dependent" packages can take some time and
