@@ -22,10 +22,10 @@ in the file \code{questionnaireFermentation.pdf}.
 }
 \details{
 The excel file includes data from 373 participants 
-(220 French and 153, Vietnamese participants) to the
+(220 French and 153 Vietnamese participants) to the
 original study plus 30 "new" participants (students
 from the 2018 SPISE Workshop).
-A detailled analysis of these data is given in the vignette
+A detailed analysis of these data is given in the vignette
 \code{fermentationIn2NationsMCA}
 from the \code{R4SPISE2018} package.
 }

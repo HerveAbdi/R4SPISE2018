@@ -6,7 +6,9 @@
 #  miniCheeseSurvey4MCA Preambule ----
 #'@title An excel file storing the data of
 #' a subset of questions from a
-#' survey questionnaire to be analyzed by MCA.
+#' survey questionnaire to be analyzed by 
+#' multiple correspondence analysis
+#' (MCA).
 #'
 #'@description \code{miniCheeseSurvey4MCA}:
 #' An excel file
@@ -14,7 +16,7 @@
 #' 305 (French) consumers
 #' described their attitude, consumption, and knowledge about
 #'  cheese (Maroille).
-#'  These data are analyzed with multiple correspondence analysis
+#'  These data are analyzed with multiple correspondence analysis (MCA)
 #'  with the packages \code{ExPosition} and \code{PTCA4CATA}
 #' (note that the package
 #' \code{PTCA4CATA} needs to have been installed

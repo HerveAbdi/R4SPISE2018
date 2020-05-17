@@ -60,7 +60,7 @@ beersCATA <- PTCA4CATA::read.xls.CATA(path = path2file,
 }
 \references{
 These data were used for a keynote address given
- at the 2014 meeting of the Sensometric society
+ at the 2014 meeting of the Sensometrics society
  (see \url{http://www.sensometric.org/page-1757209})
   Abdi, H., Chollet, S., Valentin, D., & Lelievre, M.
  \emph{ 	Partial Triadic Correspondence Analysis of BeTA

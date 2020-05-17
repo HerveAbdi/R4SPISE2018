@@ -24,7 +24,7 @@
 #' 
 #'@details
 #' The excel file includes data from 373 participants 
-#' (220 French and 153, Vietnamese participants) to the
+#' (220 French and 153 Vietnamese participants) to the
 #' original study plus 30 "new" participants (students
 #' from the 2018 SPISE Workshop).
 #' A detailed analysis of these data is given in the vignette

@@ -4,7 +4,7 @@
 \name{multiculturalSortingSpices}
 \alias{multiculturalSortingSpices}
 \title{An excel file:
-61 assessors from 5 countries sorted 16 spice samples}
+61 assessors from 5 countries sorted 16 spice samples.}
 \description{
 \code{multiculturalSortingSpices}. An excel file
 storing the data from a sorting task:
@@ -26,9 +26,9 @@ The first sheet, called \code{DataSort} contains the
 sorting data: the rows are the products and the
 columns are the assessors. The data are organized and
 coded as indicated in the help for \code{distatis}
-(see also the Abdi et al.' 2007 Distatis paper).
+(see also the Abdi et al.s' 2007 Distatis paper).
 Some spices are mixtures of several spices and the names are
-short names to make graphs easier to read (the long names
+short names to make the graphs easier to read (the long names
 are given in the sheet \code{legend4Spices}).
 The first letter of the name of the assessors gives
 their nationalities: S for Spanish (10),

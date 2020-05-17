@@ -10,11 +10,11 @@
 #   Test Package:              'Cmd + Shift + T'
 # library(roxygen2)
 # library(devtools)
-# setwd('~/Dropbox/Dropbox/HA-Spise2018/R4SPISE2018 ')
+# setwd('~/Dropbox/HA-Spise2018/R4SPISE2018')
 # NOTE: a big problem with GITHUB
 # the file ~/.ssh/id_rsa needs to be u+wr for github to work on some
 # computers and uga+r on some other computers.
-# Of course, the error is rather criptic.
+# Of course, the error is rather cryptic.
 #
 # Documentation with roxygen2
 #' @title

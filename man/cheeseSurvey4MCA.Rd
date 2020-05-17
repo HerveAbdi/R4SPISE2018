@@ -2,8 +2,9 @@
 % Please edit documentation in R/cheeseSurvey4MCA.R, R/miniCheeseSurvey4MCA.R
 \name{cheeseSurvey4MCA}
 \alias{cheeseSurvey4MCA}
-\title{An excel file storing the answers
-a survey questionnaire to be analyzed by MCA.}
+\title{An excel file storing the answers of a 
+a survey questionnaire to be analyzed by 
+multiple correspondence analysis (MCA).}
 \description{
 \code{cheeseSurvey4MCA}:
 An excel file
@@ -12,7 +13,7 @@ storing the data from an attitude survey:
 described their attitude, consumption, and knowledge about
 a 
  cheese (Maroille) made in northen France.
- These data are analyzed with multiple correspondence analysis
+ These data are analyzed with multiple correspondence analysis (MCA)
  with the packages \code{ExPosition} and \code{PTCA4CATA}
 (note that the package
 \code{PTCA4CATA} needs to have been installed
@@ -25,7 +26,7 @@ storing the data from an attitude survey:
 305 (French) consumers
 described their attitude, consumption, and knowledge about
  cheese (Maroille).
- These data are analyzed with multiple correspondence analysis
+ These data are analyzed with multiple correspondence analysis (MCA)
  with the packages \code{ExPosition} and \code{PTCA4CATA}
 (note that the package
 \code{PTCA4CATA} needs to have been installed
@@ -33,9 +34,9 @@ from github with the
 command \code{devtools::install_github('HerveAbdi/PTCA4CATA')}).
 }
 \details{
-The data are stored in an excel file containing 5  sheets.
+The data are stored in an excel file containing 5 sheets.
 The first sheet, called \code{Feuil1} contains the
- data for MCA: the rows are consumers and
+ data for MCA: the rows are consumers and the
 columns are variables.
 The other sheets (called \code{Feuil2} to \code{Feuil5})
 provide additional information.

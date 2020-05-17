@@ -5,7 +5,7 @@
 \title{A \code{docx} (Words) file
 listing the questions used for
 \code{cheeseSurvey4MCA.xlsx} and
-\code{miniCheeseSurvey4MCA.xlsx}}
+\code{miniCheeseSurvey4MCA.xlsx}.}
 \description{
 \code{questionsCheeseSurvey}:
 A \code{docx} (Words) file
