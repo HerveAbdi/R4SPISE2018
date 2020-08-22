@@ -1,9 +1,9 @@
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # A clean start
 rm(list = ls())
 graphics.off()
 
-## ----setup, include = FALSE, ECHO = FALSE--------------------------------
+## ----setup, include = FALSE, ECHO = FALSE-------------------------------------
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
 knitr::opts_chunk$set(
@@ -12,21 +12,28 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ----pdfIt, echo = FALSE, warning = FALSE, eval = FALSE-----------------------
+#  # To get the vignette as a pdf file
+#  rmarkdown::render("sortingNoodlesInAsia.Rmd",
+#           bookdown::pdf_document2(keep_tex = TRUE,
+#           toc_depth = 3)  ,
+#           output_dir = '../../test4Spise2018/sortingNoodles/')
+
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  # Knitr options here
 #  knitr::opts_knit$get()
 
-## ----nsubject, echo = FALSE----------------------------------------------
+## ----nsubject, echo = FALSE---------------------------------------------------
 nK = 30
 
 ## ----zeNoodles, echo=FALSE, fig.cap="The Ramen Noodles Pictures \\label{fig:ramenPictures}", fig.height=4, fig.width=6, include=TRUE, out.width='85%'----
 knitr::include_graphics('../man/figures/ramenNoodlesImages.png')
 
-## ---- include = FALSE----------------------------------------------------
+## ---- include = TRUE, echo = TRUE---------------------------------------------
 rm(list = ls())
 graphics.off()
 
-## ----loadPackages--------------------------------------------------------
+## ----loadPackages-------------------------------------------------------------
 # Decomment all/some these lines if the packages are not installed
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
@@ -34,6 +41,7 @@ graphics.off()
 #  install.packages('Matrix')
 #  install.packages('factoextra')
 #  install.packages('ExPosition')
+#  install.packages('pander') # nice pdf-tables
 #
 #  load the libraries that we will need
 suppressMessages(library(Matrix))
@@ -45,14 +53,15 @@ suppressMessages(library(ExPosition))
 
 
 
-## ----filenome------------------------------------------------------------
+
+## ----filenome-----------------------------------------------------------------
 file2read.name <- 'dataSortingRamen.xlsx'
 path2file <- system.file("extdata", file2read.name, package = "R4SPISE2018")
 sheetName4Data       <- 'DataSort'
 sheetName4Vocabulary <- "Vocabulary"
 sheetName4Judges     <- "JudgesDescription"
 
-## ----findDataPath--------------------------------------------------------
+## ----findDataPath-------------------------------------------------------------
 path2file <- system.file("extdata",
        "dataSortingRamen.xlsx", package = "R4SPISE2018")
 
@@ -66,7 +75,7 @@ knitr::include_graphics('../man/figures/imageOfSortingNoodles.png')
 # file.copy(path2file, 'ramen.xlsx')
 
 
-## ----resdSortingData-----------------------------------------------------
+## ----resdSortingData----------------------------------------------------------
 # read the sortinig data and the vocabulary
 multiSort.list <- read.df.excel(path = path2file, 
                     sheet = sheetName4Data,
@@ -74,39 +83,40 @@ multiSort.list <- read.df.excel(path = path2file,
 multiSort  <- multiSort.list$df.data
 vocabulary <- multiSort.list$df.voc
 
-## ----savexls, echo = FALSE, eval = FALSE, include = FALSE----------------
+## ----savexls, echo = FALSE, eval = FALSE, include = FALSE---------------------
 #  # saveFile <- file.copy(from = path2file, to = '~/Downloads/myDataFile.xlsx')
 
-## ----peekASort-----------------------------------------------------------
-# de-comment to run
-knitr::kable(multiSort[1:5,1:10])
+## ----peekASort----------------------------------------------------------------
+library(pander)
+# knitr::kable(multiSort[1:5,1:10])
+pander::pander(multiSort[1:5,1:10])
 
-## ----readJudges----------------------------------------------------------
+## ----readJudges---------------------------------------------------------------
 # read the sortinig data and the vocabulary
 judgesDescription <- read.df.excel(path = path2file, 
                                   sheet = sheetName4Judges)$df.data
 nVarJudges  <- ncol(judgesDescription)
 
-## ----k4Judges------------------------------------------------------------
+## ----k4Judges-----------------------------------------------------------------
 k <- 1 # this is the first descriptor for the judges
 
-## ----descJudges----------------------------------------------------------
+## ----descJudges---------------------------------------------------------------
 descJudges <- judgesDescription[,k ]
 
-## ----colJudges-----------------------------------------------------------
+## ----colJudges----------------------------------------------------------------
 # Create a 0/1 group matrix with ExPosition::makeNominalData()
 nominal.Judges <- makeNominalData(as.data.frame(descJudges))
 # get the colors
 color4Judges.list <- prettyGraphs::createColorVectorsByDesign(nominal.Judges)
 # color4Judges.list
 
-## ----getCube-------------------------------------------------------------
+## ----getCube------------------------------------------------------------------
 DistanceCube <- DistanceFromSort(multiSort)
 
-## ----runDistatis---------------------------------------------------------
+## ----runDistatis--------------------------------------------------------------
 resDistatis <- distatis(DistanceCube)
 
-## ----rvGroups------------------------------------------------------------
+## ----rvGroups-----------------------------------------------------------------
 # Get the factors from the Cmat analysis
 G <- resDistatis$res4Cmat$G 
 # Compute the mean by groups of HJudges
@@ -119,7 +129,7 @@ BootCube <- PTCA4CATA::Boot4Mean(G, design = descJudges,
                        suppressProgressBar = TRUE)
 # head(BootCube)
 
-## ----computeSk-----------------------------------------------------------
+## ----computeSk----------------------------------------------------------------
 F_j     <- resDistatis$res4Splus$PartialF
 alpha_j <- resDistatis$res4Cmat$alpha
 # create the groups of Judges
@@ -144,16 +154,16 @@ for (k in 1:nK){
 }
 
 
-## ----projVoc-------------------------------------------------------------
+## ----projVoc------------------------------------------------------------------
 F4Voc <- projectVoc(multiSort.list$df.voc, resDistatis$res4Splus$F)
 
-## ----RV.scree.MapPlain, fig.height=4, fig.width= 7-----------------------
+## ----RV.scree.MapPlain, fig.height=4, fig.width= 7----------------------------
 # 5.A. A scree plot for the RV coef. Using standard plot (PTCA4CATA)
 scree.rv.out <- PlotScree(ev = resDistatis$res4Cmat$eigValues, 
                    title = "RV-map: Explained Variance per Dimension")
 a1.Scree.RV <- recordPlot() # Save the plot
 
-## ----RVGplot-------------------------------------------------------------
+## ----RVGplot------------------------------------------------------------------
 # Create the layers of the map
 gg.rv.graph.out <- createFactorMap(X = resDistatis$res4Cmat$G, 
                             axis1 = 1, axis2 = 2, 
@@ -172,10 +182,10 @@ a2a.gg.RVmap <- gg.rv.graph.out$zeMap + labels4RV
 a2b.gg.RVmap <- gg.rv.graph.out$zeMap_background +
                 gg.rv.graph.out$zeMap_dots + labels4RV
 
-## ----mapa2a, fig.height=6, fig.width= 9----------------------------------
+## ----mapa2a, fig.height=6, fig.width= 9---------------------------------------
 print(a2a.gg.RVmap )
 
-## ----RVwithCI------------------------------------------------------------
+## ----RVwithCI-----------------------------------------------------------------
 # First the means
 # A tweak for colors
 in.tmp    <- sort(rownames(color4Judges.list$gc), index.return = TRUE)$ix
@@ -197,14 +207,14 @@ GraphElli.rv <- MakeCIEllipses(BootCube$BootCube[,1:2,],
                  p.level = .95)
 a2d.gg.RVMap.CI <- a2b.gg.RVmap + gg.rv.means$zeMap_dots + GraphElli.rv 
 
-## ----meansRV-------------------------------------------------------------
+## ----meansRV------------------------------------------------------------------
 knitr::kable(JudgesMeans[,1:3])
 
 
-## ----mapa2d, fig.height=6, fig.width= 9----------------------------------
+## ----mapa2d, fig.height=6, fig.width= 9---------------------------------------
 print(a2d.gg.RVMap.CI )
 
-## ----HCA-----------------------------------------------------------------
+## ----HCA----------------------------------------------------------------------
  D <- dist(resDistatis$res4Cmat$G, method = "euclidean")
  fit <- hclust(D, method = "ward.D2")
  a05.tree4participants <- fviz_dend(fit,  k = 1, 
@@ -213,10 +223,31 @@ print(a2d.gg.RVMap.CI )
                         cex = .7, xlab = 'Participants',
                         main = 'Cluster Analysis: Participants') 
 
-## ----plothca, fig.height = 9, fig.width = 9------------------------------
+## ----plothca, fig.height = 9, fig.width = 9-----------------------------------
  print(a05.tree4participants)
 
-## ----scree4S, fig.height=4, fig.width=7----------------------------------
+## ----kmeans-------------------------------------------------------------------
+# First plain k-means
+set.seed(42)
+participants.kMeans <- kmeans(x = G , centers = 4)
+#_____________________________________________________________________
+# Now to get a map by cluster:
+col4Clusters  <- createColorVectorsByDesign(
+              makeNominalData(
+              as.data.frame(participants.kMeans$cluster)  ))
+
+## ----kmeans.graph, fig.height=6, fig.width= 9---------------------------------
+baseMap.i.km <- PTCA4CATA::createFactorMap(G,
+                             title = "RV map. k-means 4 groups",        
+                                  col.points = col4Clusters$oc,
+                                  col.labels = col4Clusters$oc,
+                 constraints =    gg.rv.graph.out$constraints,
+                                  alpha.points =  .4)
+a06.aggMap.i.km <- baseMap.i.km$zeMap_background +
+  baseMap.i.km$zeMap_dots + baseMap.i.km$zeMap_text +  labels4RV
+print(a06.aggMap.i.km)
+
+## ----scree4S, fig.height=4, fig.width=7---------------------------------------
 #---------------------------------------------------------------------
 # A scree plot for the Compromise.
 scree.S.out <- PlotScree(
@@ -266,10 +297,10 @@ gg.boot.graph.out.elli <- MakeCIEllipses(
 b3.gg.map.elli <- gg.compromise.graph.out$zeMap + gg.boot.graph.out.elli + label4S 
 #
 
-## ----plot4S, fig.height=6, fig.width= 9----------------------------------
+## ----plot4S, fig.height=6, fig.width= 9---------------------------------------
 print(b2.gg.Smap)
 
-## ----cluster4Prod--------------------------------------------------------
+## ----cluster4Prod-------------------------------------------------------------
 nFac4Prod = 3
 D4Prod <- dist(resDistatis$res4Splus$F[,1:nFac4Prod], method = "euclidean")
  fit4Prod <- hclust(D4Prod, method = "ward.D2")
@@ -279,10 +310,10 @@ D4Prod <- dist(resDistatis$res4Splus$F[,1:nFac4Prod], method = "euclidean")
                         cex = .7, xlab = 'Products',
                         main = 'Cluster Analysis: Products') 
 
-## ----plothcaProd, fig.height = 9, fig.width = 9--------------------------
+## ----plothcaProd, fig.height = 9, fig.width = 9-------------------------------
  print(b3.tree4Product)
 
-## ----PartialFS-----------------------------------------------------------
+## ----PartialFS----------------------------------------------------------------
 # get the partial map
 map4PFS <- createPartialFactorScoresMap(
                          factorScores = resDistatis$res4Splus$F,      
@@ -303,7 +334,7 @@ print(d1.partialFS.map.byProducts )
 ## ----SwithCategories.2, fig.height=6, fig.width= 9, message = FALSE, warning = FALSE, error = FALSE----
 print(d2.partialFS.map.byCategories)
 
-## ----graphVoc------------------------------------------------------------
+## ----graphVoc-----------------------------------------------------------------
 # 5.5. Vocabulary
 # 5.5.2 CA-like Barycentric (same Inertia as products)
 gg.voc.bary <- createFactorMap(F4Voc$Fvoca.bary,
@@ -321,15 +352,15 @@ b5.gg.voc.bary.dots.gr <- gg.compromise.graph.out$zeMap_background +
                           gg.voc.bary$zeMap_text + label4S 
 #print(gg.voc.bary.dots.gr)
 
-## ----vocbary, fig.height=6, fig.width = 9--------------------------------
+## ----vocbary, fig.height=6, fig.width = 9-------------------------------------
 print(e1.gg.voc.bary.gr)
 
-## ----vocbaryProd, fig.height=6, fig.width = 9----------------------------
+## ----vocbaryProd, fig.height=6, fig.width = 9---------------------------------
 print(b5.gg.voc.bary.dots.gr)
 
 ## ----saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----
 #  toto <- PTCA4CATA::saveGraph2pptx(file2Save.pptx = name4Graphs,
-#                   title = '30 (mostly Asian) participants sort pictures of 20 Ramens',
+#                   title = '30 (mostly Asian) participants sort pictures of 20 Ramen noodles',
 #                   addGraphNames = TRUE)
 
 ## ----powerpoint,  message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----

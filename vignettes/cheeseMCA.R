@@ -1,4 +1,4 @@
-## ----note, include = FALSE, ECHO = FALSE, eval = FALSE-------------------
+## ----note, include = FALSE, ECHO = FALSE, eval = FALSE------------------------
 #  **NOTE:**
 #  
 #  This `pdf` was generated from the vignette
@@ -6,19 +6,19 @@
 #  `R4SPISE2018`. Check the help for the
 #  very last version of this document.
 
-## ---- include = TRUE, echo = TRUE----------------------------------------
+## ---- include = TRUE, echo = TRUE---------------------------------------------
 rm(list = ls())
 graphics.off()
 
-## ----setup, include = FALSE, ECHO = FALSE--------------------------------
+## ----setup, include = FALSE, ECHO = FALSE-------------------------------------
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
 knitr::opts_chunk$set( collapse = TRUE, comment = "#>")
 
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  knitr::opts_knit$get()
 
-## ----loadPackages--------------------------------------------------------
+## ----loadPackages-------------------------------------------------------------
 # Decomment all/some these lines if the packages are not installed
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
@@ -42,7 +42,7 @@ suppressMessages(library(grid))      # that will be saved in the
 suppressMessages(library(gtable))    # powerpoint with the figures
 
 
-## ----findDataPath--------------------------------------------------------
+## ----findDataPath-------------------------------------------------------------
 path2file <- system.file("extdata",
        "miniCheeseSurvey4MCA.xlsx", package = "R4SPISE2018")
 
@@ -51,21 +51,21 @@ path2file <- system.file("extdata",
 knitr::include_graphics('../man/figures/maroilesMCA.png')
 
 
-## ----resdSortingData-----------------------------------------------------
+## ----resdSortingData----------------------------------------------------------
 rawData <- read.df.excel(path = path2file, sheet = 'Data')$df.data
 
-## ----savexls-------------------------------------------------------------
+## ----savexls------------------------------------------------------------------
 saveFile <- file.copy(from = path2file, to = '~/Downloads/myDataFile.xlsx')
 
-## ----maketmpData---------------------------------------------------------
+## ----maketmpData--------------------------------------------------------------
 temp.df <- dplyr::select(rawData, Q09_Sex:Q11_City, Q01_Know1:Q08_Know8, 
                    Q15_C01:Q38_C24)
 
-## ----recodeSex-----------------------------------------------------------
+## ----recodeSex----------------------------------------------------------------
 # We recode sex as m/f
 sex  =  car::recode(temp.df[,'Q09_Sex'], " 1 = 'm';2 = 'f'")
 
-## ---- message = FALSE, warning = FALSE-----------------------------------
+## ---- message = FALSE, warning = FALSE----------------------------------------
 # correct responses
 correct.Know = c(3,3,1,2,1,1,1,3)
 # where are the knowledge questions
@@ -75,59 +75,59 @@ correct.answers =  rowSums(matrix(correct.Know, nrow = nrow(temp.df),
                    ncol = length(correct.Know), byrow = TRUE) ==
            temp.df[,which(knowQuestions)])
 
-## ----histKnow, fig.width = 6, fig.height= 5------------------------------
+## ----histKnow, fig.width = 6, fig.height= 5-----------------------------------
 hist(correct.answers, main = '', breaks = 0:8,  xlab = 'Number of Correct Answers')
 
-## ----rescaleKnow---------------------------------------------------------
+## ----rescaleKnow--------------------------------------------------------------
 # Make only three categories use recode from package car
 know =  car::recode(correct.answers, "0 = 1; 1 = 1; 2 = 1; 3 = 1; 4 = 2; 5 = 3; 6 = 3")
 
-## ----rescaleAge----------------------------------------------------------
+## ----rescaleAge---------------------------------------------------------------
 oriAge <- temp.df$Q10_Age
 newAge  <- car::recode(oriAge, "1 = 1; 2 = 1; 3 = 2; 4 = 3; 5 = 4; 6 = 4")
 
 ## ---- fig.cap = 'Response distribution for Likert scales \\label{tab:Likert}', outwidth = '100%'----
 knitr::kable( t(apply(rawData[,32:55],2,function(x){summary(as.factor(x))})))
 
-## ----Lick2Keep-----------------------------------------------------------
+## ----Lick2Keep----------------------------------------------------------------
 Lick2Keep = c('Q15_C01','Q19_C05','Q21_C07',
                'Q24_C10','Q25_C11','Q32_C18')
 
-## ----binLick-------------------------------------------------------------
+## ----binLick------------------------------------------------------------------
 
 Lickert <- temp.df[, colnames(temp.df) %in% Lick2Keep]
 recl <- function(x){y = car::recode(x, "1 = 1; 2 = 1; 3 = 2; 4 = 2") }
 rec.Lickert <- apply(Lickert,2,recl)
 
-## ----cleanData-----------------------------------------------------------
+## ----cleanData----------------------------------------------------------------
 cleanData <- cbind(sex,newAge,rawData$Q11_City,know,rec.Lickert)
 colnames(cleanData) <- c('Sex','Age','City','Know',
                           'C01','C05','C07','C10','C11','C18')
 # make sure that there is no NA left
 cleanData <- cleanData[complete.cases(cleanData),]
 
-## ----runMCA--------------------------------------------------------------
+## ----runMCA-------------------------------------------------------------------
 resMCA <- epMCA(cleanData, graphs = FALSE) 
 
-## ----subset.L------------------------------------------------------------
+## ----subset.L-----------------------------------------------------------------
  cleanData.Lille = cleanData[cleanData[,'City'] == 'Lille',]
  cleanData.Lille <- cleanData.Lille[, (colnames(cleanData.Lille) != 'City') ]
 
-## ----runMCA.lille--------------------------------------------------------
+## ----runMCA.lille-------------------------------------------------------------
 resMCA.Lille <- epMCA(cleanData.Lille, graphs = FALSE) 
 
-## ----subset.A------------------------------------------------------------
+## ----subset.A-----------------------------------------------------------------
  cleanData.Angers <- cleanData[cleanData[,'City'] == 'Angers',]
  cleanData.Angers <- cleanData.Angers[, (colnames(cleanData.Angers) != 'City') ]
 
-## ----runMCA.angers-------------------------------------------------------
+## ----runMCA.angers------------------------------------------------------------
  resMCA.Angers <- epMCA(cleanData.Angers, graphs = FALSE) 
 
-## ----colors--------------------------------------------------------------
+## ----colors-------------------------------------------------------------------
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 
-## ----ctrVar--------------------------------------------------------------
+## ----ctrVar-------------------------------------------------------------------
 # Extract the root names before the "."
 varNames <- stringi::stri_extract(rownames(cJ),regex = '[^.]*')
 varCtr.tmp <- aggregate(cJ ~ varNames, (cbind(varNames,cJ)),sum)
@@ -135,7 +135,7 @@ varCtr <- varCtr.tmp[,-1]
 rownames(varCtr)    <- varCtr.tmp[,1]
 rownames(color4Var) <- varCtr.tmp[,1]
 
-## ----ctrVar.Tab----------------------------------------------------------
+## ----ctrVar.Tab---------------------------------------------------------------
 nFact <- min(5, ncol(cJ) - 1)
 # knitr::kable(round( varCtr[,1:nFact]*1000 ) )
 # save table as a graph
@@ -150,7 +150,7 @@ TableWithTitle <- gTree(children = gList(ctrTable, title))
 grid.draw(TableWithTitle)
 a00.1.ctrTable  <- recordPlot()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 nM   <- nrow(cJ)
 nVar <- nrow(color4Var)
 col4Labels <- rep("",nM)
@@ -160,7 +160,7 @@ for (i in 1:nVar){
   col4Labels[lindex] <- color4Var[i]
 }
 
-## ----screeMCA, fig.height=4, fig.width= 7--------------------------------
+## ----screeMCA, fig.height=4, fig.width= 7-------------------------------------
 # 5.A. A scree plot for the RV coef. Using standard plot (PTCA4CATA)
 scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
                    p.ev = NULL, max.ev = NULL, alpha = 0.05,
@@ -171,7 +171,7 @@ scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs,
                    lwd4Kaiser = 2.5)
 a1.Scree <- recordPlot() # Save the plot
 
-## ----createFjMap---------------------------------------------------------
+## ----createFjMap--------------------------------------------------------------
 axis1 = 1
 axis2 = 2
 Fj <- resMCA$ExPosition.Data$fj
@@ -203,10 +203,10 @@ aa.1.BaseMap.Fj <- BaseMap.Fj$zeMap +  labels4MCA
 aa.2.BaseMapNoDot.Fj  <- BaseMap.Fj$zeMap_background +
                           BaseMap.Fj$zeMap_text + labels4MCA 
 
-## ----plotaMap, fig.width= 8 , fig_width = '100%'-------------------------
+## ----plotaMap, fig.width= 8 , fig_width = '100%'------------------------------
 print(aa.1.BaseMap.Fj)
 
-## ----createFiMap---------------------------------------------------------
+## ----createFiMap--------------------------------------------------------------
 Fi <- resMCA$ExPosition.Data$fi
 colCity <- c('darkblue', 'red4')
 nI <- nrow(Fi)
@@ -238,10 +238,10 @@ BaseMap.Fi <- createFactorMap(X = Fi , # resMCA$ExPosition.Data$fj,
 aa.5.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
                           BaseMap.Fi$zeMap_dots + labels4MCA 
 
-## ----plotaMapi, fig.width= 8---------------------------------------------
+## ----plotaMapi, fig.width= 8--------------------------------------------------
 print(aa.5.BaseMapNoLabels.Fi)
 
-## ----createFjMap.A-------------------------------------------------------
+## ----createFjMap.A------------------------------------------------------------
 col4Labels.sub <- col4Labels[varNames != 'City']
 axis1 = 1
 axis2 = 2
@@ -274,10 +274,10 @@ ca.1.BaseMap.Fj.Angers       <- BaseMap.Fj.Angers$zeMap +  labels4MCA.Angers
 ca.2.BaseMapNoDot.Fj.Angers  <- BaseMap.Fj.Angers$zeMap_background +
                           BaseMap.Fj.Angers$zeMap_text + labels4MCA.Angers 
 
-## ----plotaMap.A, fig.width = 10, fig.height = 8--------------------------
+## ----plotaMap.A, fig.width = 10, fig.height = 8-------------------------------
 print(ca.1.BaseMap.Fj.Angers)
 
-## ----createFjMap.L-------------------------------------------------------
+## ----createFjMap.L------------------------------------------------------------
 col4Labels.sub <- col4Labels[varNames != 'City']
 axis1 = 1
 axis2 = 2
@@ -310,7 +310,7 @@ cb.1.BaseMap.Fj.Lille       <- BaseMap.Fj.Lille$zeMap + labels4MCA.Lille
 cb.2.BaseMapNoDot.Fj.Lille  <- BaseMap.Fj.Lille$zeMap_background +
                           BaseMap.Fj.Lille$zeMap_text + labels4MCA.Lille 
 
-## ----plotaMap.L, fig.width = 10, fig.height=8----------------------------
+## ----plotaMap.L, fig.width = 10, fig.height=8---------------------------------
 print(cb.1.BaseMap.Fj.Lille)
 
 ## ----saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----

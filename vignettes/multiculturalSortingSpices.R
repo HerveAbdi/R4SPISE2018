@@ -1,4 +1,4 @@
-## ----setup, include = FALSE, ECHO = FALSE--------------------------------
+## ----setup, include = FALSE, ECHO = FALSE-------------------------------------
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
 knitr::opts_chunk$set(
@@ -7,12 +7,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  knitr::opts_knit$get()
 #  
 #  
 
-## ----note, include = FALSE, ECHO = FALSE, eval = FALSE-------------------
+## ----note, include = FALSE, ECHO = FALSE, eval = FALSE------------------------
 #  
 #  
 #  **NOTE:**
@@ -22,11 +22,11 @@ knitr::opts_chunk$set(
 #  `R4SPISE2018`. Check the help for the
 #  very last version of this document.
 
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 rm(list = ls())
 graphics.off()
 
-## ----loadPackages--------------------------------------------------------
+## ----loadPackages-------------------------------------------------------------
 # Decomment all/some these lines if the packages are not installed
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
@@ -43,7 +43,7 @@ suppressMessages(library(ExPosition))
 
 
 
-## ----findDataPath--------------------------------------------------------
+## ----findDataPath-------------------------------------------------------------
 path2file <- system.file("extdata",
        "multiculturalSortingSpices.xlsx", package = "R4SPISE2018")
 
@@ -53,20 +53,20 @@ path2file <- system.file("extdata",
 knitr::include_graphics('../man/figures/SpiceXls.png')
 
 
-## ----resdSortingData-----------------------------------------------------
+## ----resdSortingData----------------------------------------------------------
 multiSort.list <- read.df.excel(path = path2file, sheet = 'DataSort')
 multiSort <- multiSort.list$df.data
 
-## ----savexls-------------------------------------------------------------
+## ----savexls------------------------------------------------------------------
 saveFile <- file.copy(from = path2file, to = '~/Downloads/myDataFile.xlsx')
 
-## ----peekASort-----------------------------------------------------------
+## ----peekASort----------------------------------------------------------------
 knitr::kable(multiSort[1:5,1:10])
 
-## ----descJudges----------------------------------------------------------
+## ----descJudges---------------------------------------------------------------
 descJudges <- substr(colnames(multiSort),1,1)
 
-## ----colJudges-----------------------------------------------------------
+## ----colJudges----------------------------------------------------------------
 # Create a 0/1 group matrix with ExPosition::makeNominalData()
 nominal.Judges <- makeNominalData(as.data.frame(descJudges))
 # get the colors
@@ -74,13 +74,13 @@ color4Judges.list <- prettyGraphs::createColorVectorsByDesign(
               nominal.Judges)
 # color4Judges.list
 
-## ----getCube-------------------------------------------------------------
+## ----getCube------------------------------------------------------------------
 DistanceCube <- DistanceFromSort(multiSort)
 
-## ----runDistatis---------------------------------------------------------
+## ----runDistatis--------------------------------------------------------------
 resDistatis <- distatis(DistanceCube)
 
-## ----rvGroups------------------------------------------------------------
+## ----rvGroups-----------------------------------------------------------------
 # Get the factors from the Cmat analysis
 G <- resDistatis$res4Cmat$G 
 countryMeans.tmp <- aggregate(G, list(descJudges), mean) 
@@ -92,7 +92,7 @@ BootCube <- PTCA4CATA::Boot4Mean(G, design = descJudges,
                        suppressProgressBar = TRUE)
 # head(BootCube)
 
-## ----computeSk-----------------------------------------------------------
+## ----computeSk----------------------------------------------------------------
 F_j     <- resDistatis$res4Splus$PartialF
 alpha_j <- resDistatis$res4Cmat$alpha
 # create the groups of Judges
@@ -116,7 +116,7 @@ for (k in 1:nK){
 }
 
 
-## ----RV.scree.MapPlain, fig.height=4, fig.width= 7-----------------------
+## ----RV.scree.MapPlain, fig.height=4, fig.width= 7----------------------------
 # 5.A. A scree plot for the RV coef. Using standard plot (PTCA4CATA)
 scree.rv.out <- PlotScree(ev = resDistatis$res4Cmat$eigValues, 
                    p.ev = NULL, max.ev = NULL, alpha = 0.05,
@@ -127,7 +127,7 @@ scree.rv.out <- PlotScree(ev = resDistatis$res4Cmat$eigValues,
                    lwd4Kaiser = 2.5)
 a1.Scree.RV <- recordPlot() # Save the plot
 
-## ----RVGplot-------------------------------------------------------------
+## ----RVGplot------------------------------------------------------------------
 # Create the layers of the map
 gg.rv.graph.out <- createFactorMap(X = resDistatis$res4Cmat$G, 
                             axis1 = 1, axis2 = 2, 
@@ -162,10 +162,10 @@ a2b.gg.RVmap <- gg.rv.graph.out$zeMap_background +
                   axisName = "Dimension ")
 
 
-## ----mapa2a, fig.height=6, fig.width= 9----------------------------------
+## ----mapa2a, fig.height=6, fig.width= 9---------------------------------------
 print(a2a.gg.RVmap )
 
-## ----RVwithCI------------------------------------------------------------
+## ----RVwithCI-----------------------------------------------------------------
 # First the means
 # A tweak for colors
 in.tmp    <- sort(rownames(color4Judges.list$gc), index.return = TRUE)$ix
@@ -198,14 +198,14 @@ a2d.gg.RVMap.CI <- a2b.gg.RVmap + gg.rv.means$zeMap_dots + GraphElli.rv
 
 # countryMeans[,1:2]
 
-## ----meansRV-------------------------------------------------------------
+## ----meansRV------------------------------------------------------------------
 knitr::kable(countryMeans[,1:3])
 
 
-## ----mapa2d, fig.height=6, fig.width= 9----------------------------------
+## ----mapa2d, fig.height=6, fig.width= 9---------------------------------------
 print(a2d.gg.RVMap.CI )
 
-## ----HCA-----------------------------------------------------------------
+## ----HCA----------------------------------------------------------------------
  D <- dist(resDistatis$res4Cmat$G, method = "euclidean")
  fit <- hclust(D, method = "ward.D2")
  a05.tree4participants <- fviz_dend(fit,  k = 1, 
@@ -214,10 +214,10 @@ print(a2d.gg.RVMap.CI )
                         cex = .7, xlab = 'Participants',
                         main = 'Cluster Analysis: Participants') 
 
-## ----plothca, fig.height = 9, fig.width = 9------------------------------
+## ----plothca, fig.height = 9, fig.width = 9-----------------------------------
  print(a05.tree4participants)
 
-## ----scree4S, fig.height=4, fig.width=7----------------------------------
+## ----scree4S, fig.height=4, fig.width=7---------------------------------------
 #---------------------------------------------------------------------
 # A scree plot for the Compromise.
 S.eig <- eigen(resDistatis$res4Splus$Splus, 
@@ -234,7 +234,7 @@ scree.S.out <- PlotScree(
 b1.Scree.S <- recordPlot()
 #---------------------------------------------------------------------
 
-## ----createGr4S----------------------------------------------------------
+## ----createGr4S---------------------------------------------------------------
 # 4.1 Get the bootstrap factor scores (with default 1000 iterations)
 BootF <- BootFactorScores(resDistatis$res4Splus$PartialF)
 # 5.2 a compromise plot
@@ -280,15 +280,15 @@ b3.gg.map.elli <- gg.compromise.graph.out$zeMap +
     axisName = "Dimension ")
 #
 
-## ----plot4S, fig.height=6, fig.width= 9----------------------------------
+## ----plot4S, fig.height=6, fig.width= 9---------------------------------------
 # Print the product graph
 print(b2.gg.Smap)
 
-## ----plot4S_CIs, fig.height=6, fig.width= 9------------------------------
+## ----plot4S_CIs, fig.height=6, fig.width= 9-----------------------------------
 # Print the product graph
 print(b3.gg.map.elli)
 
-## ----PartialFS-----------------------------------------------------------
+## ----PartialFS----------------------------------------------------------------
 # get the partial map
 map4PFS <- createPartialFactorScoresMap(
   factorScores = resDistatis$res4Splus$F,      
@@ -319,7 +319,7 @@ print(d1.partialFS.map.byProducts )
 ## ----SwithCategories.2, fig.height=6, fig.width= 9, message = FALSE, warning = FALSE, error = FALSE----
 print(d2.partialFS.map.byCategories)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 name4Graphs = 'SortingSpices.pptx'
 
 ## ----saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----

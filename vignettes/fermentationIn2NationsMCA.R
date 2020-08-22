@@ -1,11 +1,11 @@
-## ---- eval = TRUE, ECHO = FALSE , include = FALSE------------------------
+## ---- eval = TRUE, ECHO = FALSE , include = FALSE-----------------------------
 knitr::opts_chunk$set(collapse = TRUE, fig.width = 9, comment = "#>")
 #knitr::opts_chunk$set(fig.path = '../test4Spise2018/lesFigs4Ferment/') 
 #knitr::opts_chunk$set(tex.path = '../test4Spise2018/lesFigs4Ferment/') 
 # Knitr options here
 knitr::opts_knit$get()
 
-## ----pdfIt, echo = FALSE, warning = FALSE, eval = FALSE------------------
+## ----pdfIt, echo = FALSE, warning = FALSE, eval = FALSE-----------------------
 #  # This code can be used to generate pdf or words
 #  rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',
 #                     c('bookdown::pdf_document2','bookdown::html_document2') ) ,
@@ -16,9 +16,9 @@ knitr::opts_knit$get()
 #  # Previous command cannot pass options such as keep_tex
 #  # to do so run only one format at a time such as:
 #  rmarkdown::render("fermentationIn2NationsMCA.Rmd",
-#                     bookdown::pdf_document2(keep_tex = TRUE,
-#                     toc_depth = 3)  ,
-#                     output_dir = '../../test4Spise2018/stuff4Ferment/')
+#           bookdown::pdf_document2(keep_tex = TRUE,
+#           toc_depth = 3)  ,
+#           output_dir = '../../test4Spise2018/stuff4Ferment/')
 #  # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd','tufte::tufte_html')
 #  # Not tufte works only with 2 levels of section
 #  # rmarkdown::render('../test4Spise2018/fermentationMCA.Rmd',tufte::tufte_handout(toc_depth = 2))
@@ -33,11 +33,11 @@ knitr::opts_knit$get()
 #                     rmdformats::html_clean(keep_tex = TRUE
 #                      ) )
 
-## ---- include = TRUE, echo = TRUE----------------------------------------
+## ---- include = TRUE, echo = TRUE---------------------------------------------
 rm(list = ls())
 graphics.off()
 
-## ----setup, include = FALSE, ECHO = FALSE--------------------------------
+## ----setup, include = FALSE, ECHO = FALSE-------------------------------------
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
 knitr::opts_chunk$set(
@@ -47,10 +47,10 @@ knitr::opts_chunk$set(
   fig.width =  8
 )
 
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  knitr::opts_knit$get()
 
-## ----loadPackages--------------------------------------------------------
+## ----loadPackages-------------------------------------------------------------
 # Decomment all/some these lines if the packages are not installed
 #_____________________________________________________________________
 # # October 19, 2018. Temporary fix for an Rstudio problem
@@ -77,7 +77,7 @@ knitr::opts_chunk$set(
 #  install.packages('printr')
 #  install.packages('kableExtra')
 #  load the libraries that we will need
-suppressMessages(library(Matrix))
+# suppressMessages(library(Matrix))
 suppressMessages(library(prettyGraphs))
 suppressMessages(library(ExPosition))
 suppressMessages(library(InPosition))
@@ -92,34 +92,32 @@ suppressMessages(library(gtable))       # powerpoint with the figures
 # suppressMessages(library(kableExtra)) # To pretty print tables 
 
 
-## ----name4pptx-----------------------------------------------------------
+## ----name4pptx----------------------------------------------------------------
 name4Graphs = 'fermentationFrom2Countries_withJsup.pptx'
 
-## ----filename, eval = TRUE-----------------------------------------------
+## ----filename, eval = TRUE----------------------------------------------------
 file2read.name     <- 'fermentedFoodSurvey.xlsx' # xls data file name
 path2file <- system.file("extdata", file2read.name, package = "R4SPISE2018")
 
-## ----sheetName-----------------------------------------------------------
+## ----sheetName----------------------------------------------------------------
 sheetName4Data     <- 'dataMCA' # sheet name for the data
 
 ## ----xls.datafile, echo=FALSE, fig.cap="The Data Excel File \\label{fig:spicesxl}", fig.height=3, fig.width=4, include=TRUE, out.width='70%'----
-
 knitr::include_graphics('../man/figures/fermentationXlsFile.png')
 
-
-## ----resdSortingData-----------------------------------------------------
+## ----resdSortingData----------------------------------------------------------
 rawData.tmp <- DistatisR::read.df.excel(path = path2file, 
                              sheet = sheetName4Data)$df.data
 # 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Transform the data into factors
 rawData <- apply(rawData.tmp,2,as.factor)
 
-## ----summary-------------------------------------------------------------
+## ----summary------------------------------------------------------------------
  knitr::kable( t( summary(rawData) ) )
 
-## ----maketmpData---------------------------------------------------------
+## ----maketmpData--------------------------------------------------------------
 temp.df <- dplyr::select(as.data.frame(rawData), 
                          supVar,
                          sex , age, occupation, nation, frequency, 
@@ -128,7 +126,7 @@ temp.df <- dplyr::select(as.data.frame(rawData),
                          quality, industrial, preservation, health,  
                          expensive, taste, trust, clear, innovation)
 
-## ----recodeAge-----------------------------------------------------------
+## ----recodeAge----------------------------------------------------------------
 temp.df[,'age'] <- plyr::mapvalues(temp.df[,'age'], 
                           from = c("<25", ">25"), to = c("Y", "O"))
 temp.df[,'occupation'] <- plyr::mapvalues(temp.df[,'occupation'], 
@@ -136,7 +134,7 @@ temp.df[,'occupation'] <- plyr::mapvalues(temp.df[,'occupation'],
 temp.df[,'nation'] <- plyr::mapvalues(temp.df[,'nation'], 
                           from = c("F", "VN"), to = c("F", "V"))
 
-## ----cleanData-----------------------------------------------------------
+## ----cleanData----------------------------------------------------------------
 cleanData.tmp <- temp.df
 cleanData.tmp <- cleanData.tmp[complete.cases(cleanData.tmp),]
 cleanData.allVar <- cleanData.tmp[cleanData.tmp[,1] == 'A', 2:ncol(cleanData.tmp)]
@@ -144,10 +142,10 @@ cleanData.varSup <- cleanData.allVar[,1:4]
 cleanData        <- cleanData.allVar[,5:ncol(cleanData.allVar)]
 cleanData.sup <- cleanData.tmp[cleanData.tmp[,1] == 'S', 6:ncol(cleanData.tmp)]
 
-## ----runMCA--------------------------------------------------------------
+## ----runMCA-------------------------------------------------------------------
 resMCA <- epMCA(cleanData, graphs = FALSE) 
 
-## ----runMCA.sup----------------------------------------------------------
+## ----runMCA.sup---------------------------------------------------------------
 # recode the factors as set of 0/1 variables
 testclean <- makeNominalData(rbind(cleanData,cleanData.sup))
 clean.Sup <-  testclean[cleanData.tmp[,1] == 'S',]
@@ -159,33 +157,33 @@ resMCA.sup <- supplementaryRows(SUP.DATA = clean.Sup, res = resMCA)
 colnames(resMCA.sup$fii) <- paste0('Dimension ',
                                 1:ncol(resMCA.sup$fii))
 
-## ----runMCA.varsup-------------------------------------------------------
+## ----runMCA.varsup------------------------------------------------------------
 #
 resMCA.varSup <- supplementaryCols(SUP.DATA = makeNominalData(cleanData.varSup),
                                         res = resMCA)
 colnames(resMCA.varSup$fjj) <- paste0('Dimension ',
                                 1:ncol(resMCA.varSup$fjj))
 
-## ----inferences, message = FALSE, warning = FALSE, results= FALSE--------
+## ----inferences, message = FALSE, warning = FALSE, results= FALSE-------------
 resMCA.inf <- epMCA.inference.battery(cleanData, graphs = FALSE)
 
-## ----screeMCA, fig.height=4, fig.width= 7--------------------------------
+## ----screeMCA, fig.height=4, fig.width= 7-------------------------------------
 scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
                     title = "MCA. Explained Variance per Dimension")
 b0001a.Scree <- recordPlot() # Save the plot
 
-## ----screeMCA.inf, fig.height=4, fig.width= 7----------------------------
+## ----screeMCA.inf, fig.height=4, fig.width= 7---------------------------------
 scree.mca <- PlotScree(ev = resMCA$ExPosition.Data$eigs, 
                p.ev = resMCA.inf$Inference.Data$components$p.vals, 
                plotKaiser = TRUE,
                title = "MCA. Explained Variance per Dimension")
 b0001b.Scree <- recordPlot() # Save the plot
 
-## ----colors--------------------------------------------------------------
+## ----colors-------------------------------------------------------------------
 cJ <- resMCA$ExPosition.Data$cj
 color4Var <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData))
 
-## ----phi2----------------------------------------------------------------
+## ----phi2---------------------------------------------------------------------
 # Pseudo Heat Map. Correlation ----
 # We need correlation to compare with PCA
 corrMatBurt.list <- phi2Mat4BurtTable(cleanData)
@@ -205,11 +203,11 @@ corr4MCA.r <- corrplot::corrplot(
 # dev.new()
 a0000.corMat.phi <- recordPlot()
 
-## ----ctrVar--------------------------------------------------------------
+## ----ctrVar-------------------------------------------------------------------
 varCtr <- data4PCCAR::ctr4Variables(cJ) 
 rownames(color4Var) <- rownames(varCtr)
 
-## ----ctrVar.Tab----------------------------------------------------------
+## ----ctrVar.Tab---------------------------------------------------------------
 nFact <- min(5, ncol(cJ) - 1)
 #knitr::kable(round( varCtr[,1:nFact]*1000 ) )
 # save table as a graph
@@ -230,7 +228,7 @@ TableWithTitle <- gTree(children = gList(ctrTable, title))
 grid.draw(TableWithTitle)
 #a0000.2.ctrTable  <- recordPlot()
 
-## ----printr,  echo = FALSE, message = FALSE------------------------------
+## ----printr,  echo = FALSE, message = FALSE-----------------------------------
 # As an alternative we print the contributions with a combination
 #of `kable` and `printr` as:
 laTable <- round(varCtr[,1:nFact]*1000)
@@ -240,12 +238,12 @@ laTable <- round(varCtr[,1:nFact]*1000)
 #  add_header_above(c(" ", "Dimensions" = nFact))
   
 
-## ----color4Levels--------------------------------------------------------
+## ----color4Levels-------------------------------------------------------------
 col4Levels <- data4PCCAR::coloringLevels(
                        rownames(resMCA$ExPosition.Data$fj), color4Var)
 col4Labels <- col4Levels$color4Levels
 
-## ----ctrV1---------------------------------------------------------------
+## ----ctrV1--------------------------------------------------------------------
 varCtr1 <- varCtr[,1]
 names(varCtr1) <- rownames(varCtr)
 a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
@@ -257,7 +255,7 @@ a0005.Var.ctr1  <- PrettyBarPlot2(varCtr1,
 )
 print(a0005.Var.ctr1)
 
-## ----ctrV2---------------------------------------------------------------
+## ----ctrV2--------------------------------------------------------------------
 varCtr2 <- varCtr[,2]
 names(varCtr2) <- rownames(varCtr)
 a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
@@ -269,7 +267,7 @@ a0006.Var.ctr2  <- PrettyBarPlot2(varCtr2,
 )
 print(a0006.Var.ctr2)
 
-## ----ctrV3---------------------------------------------------------------
+## ----ctrV3--------------------------------------------------------------------
 varCtr3 <- varCtr[,3]
 names(varCtr3) <- rownames(varCtr)
 a0006.Var.ctr3  <- PrettyBarPlot2(varCtr3,
@@ -281,7 +279,7 @@ a0006.Var.ctr3  <- PrettyBarPlot2(varCtr3,
 )
 print(a0006.Var.ctr3)
 
-## ----ctrV12--------------------------------------------------------------
+## ----ctrV12-------------------------------------------------------------------
 ctrV12 <- PTCA4CATA::createFactorMap(X =  varCtr, 
                         title = "Variable Contributions", 
                         col.points = color4Var,
@@ -302,16 +300,15 @@ a0007.Var.ctr12  <- ctrV12$zeMap  + ctr.labels
 print(a0007.Var.ctr12)
 
 
-## ----getCtr12------------------------------------------------------------
-absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
-varCtr12  <- (absCtrVar[,1] + absCtrVar[,2]) / 
-   (resMCA$ExPosition.Data$eigs[1] + resMCA$ExPosition.Data$eigs[2])
-importantVar <- (varCtr12 >=  1 / length(varCtr12))
+## ----getCtr12-----------------------------------------------------------------
+var12 <- data4PCCAR::getImportantCtr(ctr = varCtr, 
+                           eig = resMCA$ExPosition.Data$eigs)
+importantVar <- var12$importantCtr.1or2
 col4ImportantVar <- color4Var
 col4NS <- 'gray90' 
 col4ImportantVar[!importantVar] <- col4NS
 
-## ----ctrV12.ns-----------------------------------------------------------
+## ----ctrV12.ns----------------------------------------------------------------
 ctrV12.imp <- PTCA4CATA::createFactorMap(X =  varCtr, 
                         title = "Important Variables: Contributions", 
                         col.points = col4ImportantVar,
@@ -327,16 +324,17 @@ a0008.Var.ctr12.imp  <- ctrV12.imp$zeMap  + ctr.labels
 print(a0008.Var.ctr12.imp)
 
 
-## ----getCtr23------------------------------------------------------------
-#absCtrVar <- as.matrix(varCtr) %*% diag(resMCA$ExPosition.Data$eigs)
-varCtr23  <- (absCtrVar[,3] + absCtrVar[,2]) / 
-   (resMCA$ExPosition.Data$eigs[3] + resMCA$ExPosition.Data$eigs[2])
-importantVar23 <- (varCtr23 >=  1 / length(varCtr23))
+## ----getCtr23-----------------------------------------------------------------
+#
+var32 <-  data4PCCAR::getImportantCtr(ctr = varCtr, 
+                                    eig = resMCA$ExPosition.Data$eigs,
+                                    axis1 = 3, axis2 = 2)
+importantVar23 <- var32$importantCtr.1or2
 col4ImportantVar23 <- color4Var
 col4NS <- 'gray90' 
 col4ImportantVar23[!importantVar23] <- col4NS
 
-## ----ctrV23.ns-----------------------------------------------------------
+## ----ctrV23.ns----------------------------------------------------------------
 ctrV23.imp <- PTCA4CATA::createFactorMap(X =  varCtr,
                                          axis1 = 3, axis2 = 2,
                         title = "Important Variables: Contributions 3 * 2", 
@@ -357,14 +355,14 @@ a0009.Var.ctr23.imp  <- ctrV23.imp$zeMap  + ctr.labels23
 print(a0009.Var.ctr23.imp)
 
 
-## ----BR4var--------------------------------------------------------------
-# Get the pseudo Bootstrap Rqtios
+## ----BR4var-------------------------------------------------------------------
+# Get the pseudo Bootstrap Ratios
 BrLevels <- resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios
 wJ       <- 1 / resMCA.inf$Fixed.Data$ExPosition.Data$W
 nIter    <- 1000
 Br4Variables <- data4PCCAR::BR4varMCA(BrLevels, wJ, nIter) 
 
-## ----BR41----------------------------------------------------------------
+## ----BR41---------------------------------------------------------------------
 VarBR1 <- Br4Variables$pseudoBR.pos[,1]
 c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 1',
@@ -375,7 +373,7 @@ c0010.Var.br1  <- PrettyBarPlot2(VarBR1,
 )
 print(c0010.Var.br1)
 
-## ----BR42----------------------------------------------------------------
+## ----BR42---------------------------------------------------------------------
 VarBR2 <- Br4Variables$pseudoBR.pos[,2]
 c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 2',
@@ -386,7 +384,7 @@ c0011.Var.br2  <- PrettyBarPlot2(VarBR2,
 )
 print(c0011.Var.br2)
 
-## ----BR43----------------------------------------------------------------
+## ----BR43---------------------------------------------------------------------
 VarBR3 <- Br4Variables$pseudoBR.pos[,3]
 c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
                     main = 'Variable Pseudo Bootstrap Ratios: Dimension 3',
@@ -397,7 +395,7 @@ c0012.Var.br3  <- PrettyBarPlot2(VarBR3,
 )
 print(c0012.Var.br3)
 
-## ----createFjMap---------------------------------------------------------
+## ----createFjMap--------------------------------------------------------------
 axis1 = 1
 axis2 = 2
 Fj <- resMCA$ExPosition.Data$fj
@@ -417,10 +415,10 @@ b0002.BaseMap.Fj <- BaseMap.Fj$zeMap + labels4MCA
 b0003.BaseMapNoDot.Fj  <- BaseMap.Fj$zeMap_background +
                           BaseMap.Fj$zeMap_text + labels4MCA 
 
-## ----plotaMap, fig.width= 8 , fig_width = '100%'-------------------------
+## ----plotaMap, fig.width= 8 , fig_width = '100%'------------------------------
 print(b0002.BaseMap.Fj)
 
-## ----mapJ-grey-----------------------------------------------------------
+## ----mapJ-grey----------------------------------------------------------------
 col4Levels.imp <- data4PCCAR::coloringLevels(rownames(Fj),
                                              col4ImportantVar)
 BaseMap.Fj.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
@@ -434,22 +432,22 @@ BaseMap.Fj.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
 b0010.BaseMap.Fj <- BaseMap.Fj.imp$zeMap + labels4MCA 
 print(b0010.BaseMap.Fj)
 
-## ----adLines-------------------------------------------------------------
+## ----adLines------------------------------------------------------------------
 lines4J <- addLines4MCA(Fj, col4Var = col4Levels.imp$color4Variables, size = .7)
  b0020.BaseMap.Fj <-  b0010.BaseMap.Fj + lines4J
  print( b0020.BaseMap.Fj)
 
-## ----someLines-----------------------------------------------------------
+## ----someLines----------------------------------------------------------------
 zeNames          <- getVarNames(rownames(Fj)) 
 importantsLabels <- zeNames$stripedNames %in% zeNames$variableNames[importantVar]
 Fj.imp <- Fj[importantsLabels,]
 lines4J.imp <- addLines4MCA(Fj.imp, 
                             col4Var = col4Levels$color4Variables[which(importantVar)], 
                             size = .9, linetype = 3, alpha = .5)
- b0021.BaseMap.Fj <-  b0020.BaseMap.Fj + lines4J.imp
+ b0021.BaseMap.Fj <-  b0010.BaseMap.Fj + lines4J.imp
  print( b0021.BaseMap.Fj)
 
-## ----mapJ23-grey---------------------------------------------------------
+## ----mapJ23-grey--------------------------------------------------------------
 col4Levels23.imp <- data4PCCAR::coloringLevels(rownames(Fj),
                                              col4ImportantVar23)
 axis3 = 3
@@ -461,7 +459,7 @@ BaseMap.Fj23.imp <- createFactorMap(X = Fj , # resMCA$ExPosition.Data$fj,
                       col.labels = col4Levels23.imp$color4Levels, 
                               text.cex = 2.5,
                               force = 2)
-labels4MCA23 <- createxyLabels.gen(x_axis = axis1, y_axis = axis2,
+labels4MCA23 <- createxyLabels.gen(x_axis = axis3, y_axis = axis2,
                lambda = resMCA$ExPosition.Data$eigs,
                tau = resMCA$ExPosition.Data$t)
 b0030.BaseMap.Fj23 <- BaseMap.Fj23.imp$zeMap + labels4MCA23 
@@ -478,7 +476,7 @@ lines4J23.imp <- addLines4MCA(Fj23.imp,
  b0031.BaseMap.Fj23 <-  b0030.BaseMap.Fj23 + lines4J23.imp
  print( b0031.BaseMap.Fj23)
 
-## ----mapvarSup-----------------------------------------------------------
+## ----mapvarSup----------------------------------------------------------------
 col4VarSup <- prettyGraphs::prettyGraphsColorSelection(ncol(cleanData.varSup))
 Fj.sup <- resMCA.varSup$fjj
 col4Levels.sup <- data4PCCAR::coloringLevels(rownames(Fj.sup), col4VarSup)
@@ -500,14 +498,14 @@ b0030.Sup.Fj <- BaseMap.Fj.sup$zeMap +
                      lines4J + lines4J.sup
 print(b0030.Sup.Fj)
 
-## ----mapvarSup.only------------------------------------------------------
+## ----mapvarSup.only-----------------------------------------------------------
 b0031.Sup.Fj.only <- BaseMap.Fj.sup$zeMap + 
                      BaseMap.Fj.imp$zeMap_dots + 
                      labels4MCA + 
                       lines4J.sup
 print(b0031.Sup.Fj.only)
 
-## ----BR1-----------------------------------------------------------------
+## ----BR1----------------------------------------------------------------------
 
 c0001.Levels.BR  <- PrettyBarPlot2(
       resMCA.inf$Inference.Data$fj.boots$tests$boot.ratios[,1], # BR
@@ -517,7 +515,7 @@ c0001.Levels.BR  <- PrettyBarPlot2(
 )
 print(c0001.Levels.BR)
 
-## ----createFiMap---------------------------------------------------------
+## ----createFiMap--------------------------------------------------------------
 Fi <- resMCA$ExPosition.Data$fi
 colCity <- c('darkblue', 'red4')
 nI <- nrow(Fi)
@@ -540,10 +538,10 @@ BaseMap.Fi <- createFactorMap(X = Fi , # resMCA$ExPosition.Data$fj,
 d0001.BaseMapNoLabels.Fi  <- BaseMap.Fi$zeMap_background +
                                   BaseMap.Fi$zeMap_dots + labels4MCA 
 
-## ----plotaMapi, fig.width= 8---------------------------------------------
+## ----plotaMapi, fig.width= 8--------------------------------------------------
 print(d0001.BaseMapNoLabels.Fi)
 
-## ----Boot4CI-------------------------------------------------------------
+## ----Boot4CI------------------------------------------------------------------
 # Bootstrap for CI:
 BootCube.Gr <- PTCA4CATA::Boot4Mean(resMCA$ExPosition.Data$fi, 
                                  design = cleanData.allVar$nation,
@@ -562,7 +560,7 @@ d002.Map.I.withMeans <- d0001.BaseMapNoLabels.Fi  +
                           MapGroup$zeMap_dots + MapGroup$zeMap_text
 print(d002.Map.I.withMeans)
 
-## ----graphElli-----------------------------------------------------------
+## ----graphElli----------------------------------------------------------------
 GraphElli <- PTCA4CATA::MakeCIEllipses(BootCube.Gr$BootCube[,1:2,],
                             names.of.factors = c("Dimension 1","Dimension 2"),
                             col = colCity,
@@ -571,7 +569,7 @@ d003.Map.I.withCI <-  d0001.BaseMapNoLabels.Fi +
                           MapGroup$zeMap_text +  GraphElli
 print(d003.Map.I.withCI)
 
-## ----TI------------------------------------------------------------------
+## ----TI-----------------------------------------------------------------------
 GraphTI.Hull <- PTCA4CATA::MakeToleranceIntervals(resMCA$ExPosition.Data$fi,
                             design = as.factor(cleanData.allVar$nation),
                             # line below is needed
@@ -592,7 +590,7 @@ d005.Map.I.withTIHull <- d002.Map.I.withMeans  +
 # dev.new()
 print(d005.Map.I.withTIHull)
 
-## ----createFiMap.sup-----------------------------------------------------
+## ----createFiMap.sup----------------------------------------------------------
 Fi.sup  <- resMCA.sup$fii
 col     <- 'green'  
 nI.sup <- nrow(Fi.sup)
@@ -615,7 +613,7 @@ e0001.BaseMapNoLabels.Fi.sup  <- BaseMap.Fi$zeMap_background +
   ggplot2::ggtitle('MCA Active and Supplementary Observations') +
                                    labels4MCA 
 
-## ----plotaMapi.sup, fig.width= 8-----------------------------------------
+## ----plotaMapi.sup, fig.width= 8----------------------------------------------
  print(e0001.BaseMapNoLabels.Fi.sup)
 
 ## ----saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----

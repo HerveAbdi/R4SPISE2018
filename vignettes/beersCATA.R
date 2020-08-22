@@ -1,7 +1,7 @@
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  knitr::opts_knit$get()
 
-## ----note, include = FALSE, ECHO = FALSE, eval = FALSE-------------------
+## ----note, include = FALSE, ECHO = FALSE, eval = FALSE------------------------
 #  **NOTE:**
 #  
 #  This `pdf` was generated from the vignette
@@ -9,11 +9,11 @@
 #  `R4SPISE2018`. Check the help for the
 #  very last version of this document.
 
-## ---- include = TRUE, echo = TRUE----------------------------------------
+## ---- include = TRUE, echo = TRUE---------------------------------------------
 rm(list = ls())
 graphics.off()
 
-## ----setup, include = FALSE, ECHO = FALSE--------------------------------
+## ----setup, include = FALSE, ECHO = FALSE-------------------------------------
 # Important: Remember 
 #     build the vignettes with devtools::build_vignettes()
 knitr::opts_chunk$set(
@@ -22,10 +22,10 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ---- eval = FALSE,ECHO = FALSE , include = FALSE------------------------
+## ---- eval = FALSE,ECHO = FALSE , include = FALSE-----------------------------
 #  knitr::opts_knit$get()
 
-## ----loadPackages--------------------------------------------------------
+## ----loadPackages-------------------------------------------------------------
 # Decomment all/some 0f these lines if the packages are not installed
 # devtools::install_github('HerveAbdi/PTCA4CATA')
 # devtools::install_github('HerveAbdi/DistatisR')
@@ -43,7 +43,7 @@ suppressMessages(library(factoextra))
 
 
 
-## ----findDataPath--------------------------------------------------------
+## ----findDataPath-------------------------------------------------------------
 path2file <- system.file("extdata",
        "beersNovicesExpertsCATA.xlsx", package = "R4SPISE2018")
 
@@ -53,10 +53,10 @@ path2file <- system.file("extdata",
 knitr::include_graphics('../man/figures/beerXLS-screen.png')
 
 
-## ----savexls-------------------------------------------------------------
+## ----savexls------------------------------------------------------------------
 saveFile <- file.copy(from = path2file, to = '~/Downloads/myDataFile.xlsx')
 
-## ----readCATAData--------------------------------------------------------
+## ----readCATAData-------------------------------------------------------------
 dataCATA.list <- read.xls.CATA(path2file   = path2file, 
                                 sheet2read = 'DataCATA',
                                 threshold4cleaning = 5)
@@ -68,7 +68,7 @@ dataCube <- normBrick4PTCA(dataCATA.list$CATA.Brick ,
 # get the contingency table from the cube
 contingencyTable <- apply(dataCube,c(1,2),sum)
 
-## ----getParam------------------------------------------------------------
+## ----getParam-----------------------------------------------------------------
 nI <- dim(dataCube)[[1]]
 nJ <- dim(dataCube)[[2]]
 nK <- dim(dataCube)[[3]]
@@ -76,16 +76,16 @@ namesR <- dimnames(dataCube)[[1]]
 namesC <- dimnames(dataCube)[[2]]
 namesA <- dimnames(dataCube)[[3]]
 
-## ----getBlock------------------------------------------------------------
+## ----getBlock-----------------------------------------------------------------
 catDescriptors.tmp <- as.data.frame(readxl::read_excel(path2file, 
                                   'Categories4Descriptors'))
 catDescriptors <- catDescriptors.tmp[catDescriptors.tmp[,1] %in% namesC,]
 
-## ----getCat4Judges-------------------------------------------------------
+## ----getCat4Judges------------------------------------------------------------
 descJudges  <- as.data.frame(readxl::read_excel(path2file, 
                                   'DescriptionJuges'))
 
-## ----getColors-----------------------------------------------------------
+## ----getColors----------------------------------------------------------------
 # Color for the descriptors
 col4Emotion <- "red4"
 col4Context <- "darkmagenta"
@@ -103,35 +103,35 @@ color4Participants <- rep(col4Experts, nK)
 color4Participants[descJudges$Expertise == 'N'] <- col4Novices
 # color4Participants[descJudges$Expertise == 'E'] <- col4Experts
 
-## ----Q4CATA--------------------------------------------------------------
+## ----Q4CATA-------------------------------------------------------------------
 # Compute Cochran's Q from the cube of data
 Q4CATA  <- Q4CATA.Cube(dataCube)
 # Create the vector of probability stars
 zeStars <-  p2Star( Q4CATA['Sidak p(FW)',])
 
-## ----heatMap-------------------------------------------------------------
+## ----heatMap------------------------------------------------------------------
 a.000.zeMapCATA <- makeggHeatMap4CT(
                    CTstared(contingencyTable,zeStars,'after'),
                             colorAttributes = color4Attributes,
                             colorProducts = color4Products)
 
-## ----printHM-------------------------------------------------------------
+## ----printHM------------------------------------------------------------------
 print(a.000.zeMapCATA)
 
 
-## ----resCA---------------------------------------------------------------
+## ----resCA--------------------------------------------------------------------
 # The CA
 ResCATACA <- epCA(contingencyTable,
-                        masses= NULL, weights= NULL, 
+                        masses = NULL, weights = NULL, 
                         hellinger = FALSE,
-                        symmetric = TRUE, graphs =FALSE)
+                        symmetric = TRUE, graphs = FALSE)
 # Renormalize the results of CA
 RenomrFi <- CARenormalization(G = ResCATACA$ExPosition.Data$fi ,
                   delta = ResCATACA$ExPosition.Data$pdq$Dv,
                   singularValues = TRUE,
                   masses = NULL)
 
-## ----bootCA--------------------------------------------------------------
+## ----bootCA-------------------------------------------------------------------
 #
 bootCA <- Boot4PTCA(ZeDataCube = dataCube,
            fi = ResCATACA$ExPosition.Data$fi,
@@ -148,7 +148,7 @@ bootRatios.J <- PTCA4CATA::boot.ratio.test(bootCA$ColumnsBoot,
 probBR.I  <- bootRatios.I$prob.boot.ratios
 probBR.J  <- bootRatios.J$prob.boot.ratios
 
-## ----permut--------------------------------------------------------------
+## ----permut-------------------------------------------------------------------
 # from PTCA4CATA
 #
 ResCATACA.inference <- perm4PTCA(aCube = dataCube,
@@ -162,7 +162,7 @@ prob.cpt.lst <- ResCATACA.inference$MalinvaudQ['p-perm',]
 prob.cpt <- (unlist(prob.cpt.lst[2:length(prob.cpt.lst)]))
 prob.cpt[is.na(prob.cpt)] <- 1
 
-## ----ca4Judges-----------------------------------------------------------
+## ----ca4Judges----------------------------------------------------------------
 Cmat <- createCmat4PTCA(dataCube)
 # To find the observations Kept:
 #   dimnames((ZeRawDataCube))[[3]] %in% rownames(Cmat)
@@ -174,7 +174,7 @@ nk       <- 3
 F4Cmat   <- eigenCmat$vectors[,1:nk] %*% diag(eig4Cmat[1:nk]^(1/2))
 rownames(F4Cmat) <- rownames(Cmat)
 
-## ----screeRV, fig.height = 4, fig.width = 8------------------------------
+## ----screeRV, fig.height = 4, fig.width = 8-----------------------------------
 # Scree plot with significance
 ScreeInf <- PlotScree(ev = eig4Cmat,
              max.ev = NULL, alpha = 0.05,
@@ -182,7 +182,7 @@ ScreeInf <- PlotScree(ev = eig4Cmat,
              title = "RV Analysis: Explained Variance per Dimension")
 a000.00.screeRV <-  recordPlot()
 
-## ----rv4Judges-----------------------------------------------------------
+## ----rv4Judges----------------------------------------------------------------
 Shortnames4Participants <-  substr(rownames(F4Cmat),1,1)
 F4Plot <- F4Cmat
 rownames(F4Plot) <- Shortnames4Participants
@@ -190,7 +190,7 @@ rownames(F4Plot) <- Shortnames4Participants
 labels4RV <- createxyLabels.gen(1,2,lambda = eig4Cmat, tau = tau4Cmat )
 
 
-## ----mapRv---------------------------------------------------------------
+## ----mapRv--------------------------------------------------------------------
 # 
 BaseMap.Participants <- createFactorMap(X = F4Plot ,
                               axis1 = 1, axis2 = 2,
@@ -221,7 +221,7 @@ print(a.01.Map4Partipants + ggtitle('The Rv Map')) # How to add a title when pri
 ## ----graphJudges.2,  fig.cap="RV map for Judges, with names \\label{fig:rv4Judges2}", fig.height=3, fig.width= 8----
 print(a.02.Map4Partipants.labels)
 
-## ----meanFunction--------------------------------------------------------
+## ----meanFunction-------------------------------------------------------------
 getMeans <- function(G, factor, FUN = mean){
   # A function to get the mean by groups
   groupMean.tmp  <- aggregate(G, list(factor), FUN) 
@@ -230,7 +230,7 @@ getMeans <- function(G, factor, FUN = mean){
   return(groupMean)
 }
 
-## ----rvGroups------------------------------------------------------------
+## ----rvGroups-----------------------------------------------------------------
 # Get the factors from the Cmat analysis
 ExpertiseMeans <- getMeans(F4Cmat, descJudges$Expertise)
 # Bootstrap for CI
@@ -239,7 +239,7 @@ BootCube <- PTCA4CATA::Boot4Mean(F4Cmat, design = descJudges$Expertise,
                       suppressProgressBar = TRUE)
 # head(BootCube)
 
-## ----makeMapCI-----------------------------------------------------------
+## ----makeMapCI----------------------------------------------------------------
 # First the means
 # A tweak for colors
 col4Group <- c(col4Experts,col4Novices)
@@ -261,7 +261,7 @@ col.background = adjustcolor("lavender", alpha.f = 0.2),
 force = 1, segment.size = 0)
 #
  dimnames(BootCube$BootCube)[[2]] <- 
-                    paste0('Dimension ',1: dim(BootCube$BootCube)[[2]])
+                    paste0('Dimension ',1 : dim(BootCube$BootCube)[[2]])
   #c('Dim1','Dim2') 
 GraphElli.rv <- MakeCIEllipses(BootCube$BootCube[,1:2,],
                  names.of.factors = c("Dimension 1","Dimension 2"), 
@@ -272,34 +272,34 @@ a.03.gg.RVMap.CI <- a.01.Map4Partipants + gg.rv.means$zeMap_dots + GraphElli.rv
 ## ----printRV, fig.cap="RV map for Judges, with Means and Confidence Intervals\\label{fig:rv4Judges2}", fig.height=3, fig.width= 8----
 print(a.03.gg.RVMap.CI)
 
-## ----ageBin--------------------------------------------------------------
+## ----ageBin-------------------------------------------------------------------
 ageBin <- ggplot2::cut_number(descJudges$Age, 4)
 levelsAge <- levels(ageBin)
 # rename the levels for clarity
 levels(ageBin) <- list(A1 = "[25,35]",  A2 = "(35,45]",
                                A3 = "(45,54.5]", A4 =  "(54.5,67]") 
 
-## ----csum----------------------------------------------------------------
+## ----csum---------------------------------------------------------------------
 summary(as.factor(descJudges$Consumption))
 
-## ----recC----------------------------------------------------------------
+## ----recC---------------------------------------------------------------------
 descJudges$Consumption[descJudges$Consumption == 4] <- 3
 
-## ----projRV--------------------------------------------------------------
+## ----projRV-------------------------------------------------------------------
 Age <- getMeans(F4Cmat, ageBin) 
 Sex <- getMeans(F4Cmat, descJudges$Sex)
 Con <- getMeans(F4Cmat, descJudges$Consumption)
 rownames(Con) <- c('C1', 'C2', 'C3')
 
-## ----projRV2-------------------------------------------------------------
+## ----projRV2------------------------------------------------------------------
 GroupMeans4RV = rbind(Age,Sex,Con,ExpertiseMeans)
 
-## ----projRV3-------------------------------------------------------------
+## ----projRV3------------------------------------------------------------------
 col4Means.gr <- prettyGraphs::prettyGraphsColorSelection(n.colors = 4)
 col4Means <- c(rep(col4Means.gr[1],4), rep(col4Means.gr[2],2), 
                rep(col4Means.gr[3],3), rep(col4Means.gr[4],2) )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 colnames(GroupMeans4RV) <- paste0('Dimension ',1:ncol(GroupMeans4RV))
 gg.rv.groups <- PTCA4CATA::createFactorMap(GroupMeans4RV,
 constraints = BaseMap.Participants$constraints, 
@@ -313,7 +313,7 @@ col.labels = col4Means)
 a.04a.gg.RVMap.Gr <- gg.rv.groups$zeMap + labels4RV
 print(a.04a.gg.RVMap.Gr)
 
-## ----HCA-----------------------------------------------------------------
+## ----HCA----------------------------------------------------------------------
  D <- dist(F4Cmat, method = "euclidean")
  fit <- hclust(D, method = "ward.D2")
  a05.tree4participants <- fviz_dend(fit,  k = 1, 
@@ -322,18 +322,18 @@ print(a.04a.gg.RVMap.Gr)
                         cex = .4, xlab = 'Participants',
                         main = 'Cluster Analysis: Participants') 
 
-## ----plothca, fig.height = 9, fig.width = 9------------------------------
+## ----plothca, fig.height = 9, fig.width = 9-----------------------------------
  print(a05.tree4participants)
 
-## ----cutTree-------------------------------------------------------------
+## ----cutTree------------------------------------------------------------------
 grpParticipants <- cutree(fit, k = 2)
 
-## ----treeOnRv------------------------------------------------------------
+## ----treeOnRv-----------------------------------------------------------------
 col4Gr <- prettyGraphs::createColorVectorsByDesign(
              ExPosition::makeNominalData(as.matrix(grpParticipants))
 )
 
-## ----treeOnRV2, fig.width = 9--------------------------------------------
+## ----treeOnRV2, fig.width = 9-------------------------------------------------
 BaseMap.Participants.tree <- createFactorMap(X = F4Plot ,
                               title = 'The RV map colored from the tree',
                               col.points = col4Gr$oc,
@@ -343,10 +343,10 @@ BaseMap.Participants.tree <- createFactorMap(X = F4Plot ,
 a.05.Map4Partipants.tree <- BaseMap.Participants.tree$zeMap_background + 
                           BaseMap.Participants.tree$zeMap_dots + labels4RV
 
-## ----treeOnRV3, fig.width = 9--------------------------------------------
+## ----treeOnRV3, fig.width = 9-------------------------------------------------
 print(a.05.Map4Partipants.tree)
 
-## ----plotQ, fig.width = 9------------------------------------------------
+## ----plotQ, fig.width = 9-----------------------------------------------------
 # Temporary version before a ggplot2 version
 UnC.criticalC = .05
 CritChi <- qchisq(p = 1 - UnC.criticalC ,NROW(contingencyTable) -1)
@@ -358,19 +358,19 @@ Plot4Q <- PrettyBarPlotColor4Q((Q4CATA[1,]),
                                 ylab = 'Chi2 for Q')
 b00.Q.Uncorrected <-  recordPlot()
 
-## ----plotQ.cor, fig.width = 9--------------------------------------------
+## ----plotQ.cor, fig.width = 9-------------------------------------------------
 C.criticalC = 1 - (1 - UnC.criticalC)^(1/ncol(Q4CATA))
-CritChi.C <- qchisq(p = 1 - C.criticalC ,NROW(contingencyTable)-1)
+CritChi.C <- qchisq(p = 1 - C.criticalC, NROW(contingencyTable) - 1)
 Plot4Q <- PrettyBarPlotColor4Q((Q4CATA[1,]),
                                color4bar = rep('darkorchid4',
                                                ncol(Q4CATA)),
                                threshold = CritChi.C , # Critical value,
                                main = 'Chi2 for Q (Sidak corrected) ',
-                               ylab='Chi2 for Q')
+                               ylab ='Chi2 for Q')
 b01.Q.Corrected <-  recordPlot()
 
 
-## ----screeCA, fig.height = 4, fig.width = 9------------------------------
+## ----screeCA, fig.height = 4, fig.width = 9-----------------------------------
 # Scree plot with significance
 ScreeInf <- PlotScree(ev = ResCATACA$ExPosition.Data$eigs,
              p.ev = prob.cpt,
@@ -380,7 +380,7 @@ ScreeInf <- PlotScree(ev = ResCATACA$ExPosition.Data$eigs,
              title = "Explained Variance per Dimension")
 c00.screeCA.inf <-  recordPlot()
 
-## ----makeMapIJ-----------------------------------------------------------
+## ----makeMapIJ----------------------------------------------------------------
 x_axis = 1
 y_axis = 2
 xyLabels <- createxyLabels(ResCATACA,x_axis = x_axis, y_axis = y_axis)
@@ -425,16 +425,16 @@ d03.BaseMapNoLabeli.Fij  <- BaseMap.Fi$zeMap_background +
   BaseMap.Fi$zeMap_dots +
   BaseMap.Fj$zeMap_text  + xyLabels
 
-## ----Fij.v1, fig.cap="I and J sets \\label{fig:Fij1}", fig.height = 9----
+## ----Fij.v1, fig.cap="I and J sets \\label{fig:Fij1}", fig.height = 9---------
 print(d01.BaseMap.Fij )
 
-## ----Fij.v2, fig.cap="I and J sets \\label{fig:Fij2}", fig.height = 9----
+## ----Fij.v2, fig.cap="I and J sets \\label{fig:Fij2}", fig.height = 9---------
 print(d02.BaseMapNoDoti.Fij)
 
-## ----Fij.v3, fig.cap="I and J set \\label{fig:Fij3}", fig.height = 9-----
+## ----Fij.v3, fig.cap="I and J set \\label{fig:Fij3}", fig.height = 9----------
 print(d03.BaseMapNoLabeli.Fij, )
 
-## ----plotQSig------------------------------------------------------------
+## ----plotQSig-----------------------------------------------------------------
 color4AttributesCorrected <- color4Attributes
 col4ns <-  'gray80'  # Color for NS Attribute
 color4AttributesCorrected[Q4CATA[3,] >= UnC.criticalC ] <- col4ns
@@ -472,13 +472,18 @@ e04.BaseMapLabeli.Fij.cor  <- BaseMap.Fi$zeMap_background +
 ## ----printQsig, fig.cap="I and J sets. Significant Descriptors  \\label{fig:Fij4}", fig.height = 9----
 print(e04.BaseMapLabeli.Fij.cor)
 
-## ----Elli4i--------------------------------------------------------------
-graphElli4I <- MakeCIEllipses(data = bootCA$RowsBoot.asym,
+## ----Elli4i-------------------------------------------------------------------
+# Former problems here that needed to be fixed
+# the vector of names of factors and 
+# the number of factors need to be of length 2
+# this will be fixed in the the next release of PTCA4CATA
+graphElli4I <- MakeCIEllipses(data =  bootCA$RowsBoot.asym,
                          axis1 = 1, axis2 = 2,
-                         names.of.factors = c('V1','V2','V3'),
+                names.of.factors =   # c("Factor 1","Factor 2"), 
+               c('V1','V2'), # Only two here
                col = color4Products, # Color for the Products
                # centers = Center_Fi,
-               centers = RenomrFi$G_A[,1:3],
+               centers = RenomrFi$G_A[,1:2], # only two here
                # Give the coordinates of the centers
                # centers = RenomrFi$G_S,
                line.size = 1,
@@ -514,21 +519,21 @@ f.00.MapElli4I <- BaseMap.Fi.elli$zeMap_background  +
 ## ----printElli,  fig.cap="I and J sets. Significant Descriptors  \\label{fig:FiElli}", fig.height = 9----
 print(f.00.MapElli4I)
 
-## ----partialF------------------------------------------------------------
+## ----partialF-----------------------------------------------------------------
  partialFi <- partialProj4CA(resCA = ResCATACA,
                   code4Blocks = catDescriptors$Category)
  color4Blocks <- c('chartreuse4','red2','purple4')
 
-## ----FipFi---------------------------------------------------------------
+## ----FipFi--------------------------------------------------------------------
 Fi <- ResCATACA$ExPosition.Data$fi
 dimnames(Fi)[[2]] <- paste0('Dimension ',1:dim(Fi)[[2]])
 pFi <- partialFi$Fk
  dimnames(pFi)[[2]] <- paste0('Dimension ',1:dim(pFi)[[2]])
 
-## ----constraints---------------------------------------------------------
+## ----constraints--------------------------------------------------------------
 constraints4PFM <- minmaxHelper4Partial(Fi,pFi)
 
-## ----mapF----------------------------------------------------------------
+## ----mapF---------------------------------------------------------------------
 gg.Fi.map <-      createFactorMap(Fi,
                                     constraints = constraints4PFM,
                                     title = "Product by Blocks",
@@ -536,7 +541,7 @@ gg.Fi.map <-      createFactorMap(Fi,
                                     col.labels = color4Products
 ) 
 
-## ----mapPF---------------------------------------------------------------
+## ----mapPF--------------------------------------------------------------------
  map4PFS <- createPartialFactorScoresMap(
   factorScores = Fi,      
   partialFactorScores = pFi,
@@ -545,10 +550,10 @@ gg.Fi.map <-      createFactorMap(Fi,
   f01.d1.partialFS.map.byProducts    <- gg.Fi.map$zeMap + map4PFS$mapColByItems
   f01.d2.partialFS.map.byCategories  <- gg.Fi.map$zeMap + map4PFS$mapColByBlocks
 
-## ----mapByP, fig.height = 9----------------------------------------------
+## ----mapByP, fig.height = 9---------------------------------------------------
 print(f01.d1.partialFS.map.byProducts)
 
-## ----mapByC, fig.height = 9----------------------------------------------
+## ----mapByC, fig.height = 9---------------------------------------------------
 print(f01.d2.partialFS.map.byCategories)
 
 ## ----saveGraphs, message = FALSE, warning = FALSE, error = FALSE, eval = FALSE----
